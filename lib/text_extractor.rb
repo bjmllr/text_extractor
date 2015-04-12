@@ -26,9 +26,7 @@ class TextExtractor
   end
 
   def scan(input)
-    scanner = Extraction.new(input)
-    while scanner.match(to_re); end
-    scanner.record_matches
+    Extraction.new(input, to_re).scan.record_matches
   end
 
   def regexps

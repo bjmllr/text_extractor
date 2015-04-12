@@ -1,18 +1,14 @@
 class TextExtractor
   # represents a single execution of a TextExtractor
   class Extraction
-    attr_accessor :input, :pos, :matches, :last_match
+    attr_reader :input, :re, :pos, :matches
 
-    def initialize(input)
+    def initialize(input, re)
       @input = input
+      @re = re
       @pos = 0
       @matches = []
       @last_match = nil
-    end
-
-    def last_match_end_position
-      cs = last_match.captures
-      last_match.end(cs.size - cs.reverse.find_index { |x| x })
     end
 
     def record_matches
@@ -23,12 +19,14 @@ class TextExtractor
       end
     end
 
-    def match(re)
-      @last_match = input.match(re, pos)
-      return nil unless last_match
-      @pos = last_match_end_position
-      @matches << last_match
-      @last_match
+    def scan
+      loop do
+        match = input.match(re, pos)
+        break unless match
+        @pos = match.end(0)
+        @matches << match
+      end
+      self
     end
   end # class Extraction
 end # class TextExtractor
