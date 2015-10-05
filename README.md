@@ -147,6 +147,42 @@ Successful output will be an array of hashes.  For our example, we can expect th
 ]
 ```
 
+### Extracting Non-String Values
+
+A block passed to `value` will specify how the extracted string should be interpreted. In the above example, were we to use the following value definitions:
+
+```ruby
+value(:asn_remote) { |str| str.to_i }
+value(:prefixes_received) { |str| str.to_i }
+value(:prefixes_advertised) { |str| str.to_i }
+```
+
+These values would be converted from strings to integers before being
+returned. The first record of the output might include the following:
+
+```
+  {
+    ...
+    asn_remote: 1243,
+    ...
+    prefixes_received: 31337,
+    prefixes_advertised: 23
+  },
+```
+
+The following methods are available for extracting values from the Ruby
+core and standard library:
+
+* `integer`
+* `float`
+* `rational`
+* `ipaddr`
+
+Since such types have unambiguous string representations, a minimal
+Regexp is provided for each one. These defaults are highly permissive,
+so it may be desirable to provide stricter ones depending on your
+application.
+
 ## Tests
 
 TextExtractor uses MiniTest.  You can run the tests from the project root like so:
