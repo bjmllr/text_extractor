@@ -52,7 +52,7 @@ class TextExtractor
   def strip_record(regexp)
     lines = regexp.source.lines
     prefix = lines.last
-    lines.map! { |s| s.gsub("#{prefix}", "") }
+    lines.map! { |s| s.gsub("#{prefix}", "") } if prefix =~ /\A\s*\z/
     Regexp.new(lines.join.strip)
   end
 
