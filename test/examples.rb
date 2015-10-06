@@ -199,4 +199,41 @@ module Example
       Where.new("China")
     ] # OUTPUT = [
   end # module Factories
+
+  module Filldown
+    INPUT = Example.unindent(<<-END)
+        Philosophers:
+        Rene Descartes
+        Bertrand Russell
+
+        Chemists:
+        Alfred Nobel
+        Marie Curie
+      END
+    # end INPUT
+
+    EXTRACTOR = TextExtractor.new do
+      value :occupation, /\w+/
+      value :name, /\w+ \w+/
+
+      filldown do
+        /
+        #{occupation}:
+        /x
+      end
+
+      record(fill: :occupation) do
+        /
+        #{name}
+        /x
+      end
+    end
+
+    OUTPUT = [
+      { occupation: "Philosophers", name: "Rene Descartes" },
+      { occupation: "Philosophers", name: "Bertrand Russell" },
+      { occupation: "Chemists", name: "Alfred Nobel" },
+      { occupation: "Chemists", name: "Marie Curie" }
+    ] # OUTPUT = [
+  end # module Filldown
 end # module Example

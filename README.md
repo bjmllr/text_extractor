@@ -230,6 +230,58 @@ We should expect `extractor.scan` to return:
 ]
 ```
 
+### Filldown
+
+Some texts may contain groups of records that share specific
+attributes. For example:
+
+```
+Philosophers:
+Rene Descartes
+Bertrand Russell
+
+Chemists:
+Alfred Nobel
+Marie Curie
+```
+
+From this, we may want to extract the following data:
+
+```ruby
+[
+  { occupation: "Philosophers", name: "Rene Descartes" },
+  { occupation: "Philosophers", name: "Bertrand Russell" },
+  { occupation: "Chemists", name: "Alfred Nobel" },
+  { occupation: "Chemists", name: "Marie Curie" }
+]
+```
+
+A new concept is required to achieve this using a TextExtractor:
+`filldown`. A `filldown` is a special `record` that does not generate
+rows of data, rather it modifies any row that follows it. Here is the
+`TextExtractor`, using `filldown`, that will perform the desired
+extraction:
+
+```ruby
+TextExtractor.new do
+  value :occupation, /\w+/
+  value :name, /\w+ \w+/
+
+  filldown do
+    /
+    #{occupation}:$
+    /
+  end
+
+  record(fill: :occupation) do
+    /
+    #{name}
+    /
+  end
+end
+
+```
+
 ## Tests
 
 TextExtractor uses MiniTest.  You can run the tests from the project root like so:

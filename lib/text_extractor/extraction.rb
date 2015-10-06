@@ -11,18 +11,33 @@ class TextExtractor
       @last_match = nil
     end
 
-    def record_matches
-      matches.map do |match|
-        factory = extractor.find_factory_for(match)
-        record_match(match, factory)
+    def extraction_matches
+      @fill = {}
+      matches.flat_map do |match|
+        extraction_match(match)
       end
     end
 
-    def record_match(match, factory)
-      hash = match.names.flat_map do |name|
+    def extraction_match(match)
+      record = extractor.find_record_for(match)
+      if record.is_a?(Filldown)
+        @fill.merge!(match_to_hash(match))
+        []
+      else
+        [record_match(record, match)]
+      end
+    end
+
+    def record_match(record, match)
+      factory = record.factory
+      hash = @fill.merge(match_to_hash(match))
+      factory ? factory.new(*hash.values) : hash
+    end
+
+    def match_to_hash(match)
+      match.names.flat_map do |name|
         value_pair(match, name)
       end.each_slice(2).to_h
-      factory ? factory.new(*hash.values) : hash
     end
 
     def value_pair(match, name)

@@ -5,10 +5,14 @@ require_relative "text_extractor/record"
 class TextExtractor
   attr_reader :converters, :records
 
+  Filldown = Class.new(Record)
+
   def initialize(&block)
     fail "#{self.class}.new requires a block" unless block
     @converters = {}
+    @fill = {}
     @records = []
+    @filldowns = []
     instance_exec(&block)
   end
 
@@ -56,31 +60,24 @@ class TextExtractor
     Regexp.new(lines.join.strip)
   end
 
-  def record(factory = nil, &block)
+  def record(factory = nil, fill: nil, &block)
     fail "#{self.class}.record requires a block" unless block
-    @records << Record.new(strip_record(instance_exec(&block)), factory)
+    record = Record.new(strip_record(instance_exec(&block)), factory)
+    @fill[record] = fill
+    @records << record
   end
 
-  def find_factory_for(match)
-    return if no_factory?
-    return single_factory if single_factory
-    records[records.length.times.find_index { |i| match["__#{i}"] }].factory
+  def filldown(&block)
+    fail "#{self.class}.filldown requires a block" unless block
+    @records << Filldown.new(strip_record(instance_exec(&block)))
   end
 
-  def no_factory?
-    return @no_factory unless @no_factory.nil?
-    @no_factory = records.none?(&:factory)
-  end
-
-  def single_factory
-    return @single_factory unless @single_factory.nil?
-    @single_factory = records.all?(&:factory) &&
-                      records.map(&:factory).uniq.length == 1 &&
-                      records.first.factory
+  def find_record_for(match)
+    records[records.length.times.find_index { |i| match["__#{i}"] }]
   end
 
   def scan(input)
-    Extraction.new(input, self).scan.record_matches
+    Extraction.new(input, self).scan.extraction_matches
   end
 
   def regexps

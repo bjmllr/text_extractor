@@ -20,4 +20,9 @@ class TestTextExtractor < Minitest::Test
   def test_factories
     assert_equal FACTORY::OUTPUT, FACTORY::EXTRACTOR.scan(FACTORY::INPUT)
   end
+
+  FILLDOWN = Example::Filldown
+  def test_filldown
+    assert_equal FILLDOWN::OUTPUT, FILLDOWN::EXTRACTOR.scan(FILLDOWN::INPUT)
+  end
 end # class TestTextExtractor < Minitest::Test
