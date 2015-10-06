@@ -37,8 +37,9 @@ class TextExtractor
     end
 
     def scan
+      re = extractor.to_re
       loop do
-        match = input.match(extractor.to_re, pos)
+        match = input.match(re, pos)
         break unless match
         @pos = match.end(0)
         @matches << match
