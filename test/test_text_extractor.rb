@@ -15,4 +15,9 @@ class TestTextExtractor < Minitest::Test
   def test_value_conversions
     assert_equal VALUE::OUTPUT, VALUE::EXTRACTOR.scan(VALUE::INPUT)
   end # def test_value_conversions
+
+  FACTORY = Example::Factories
+  def test_factories
+    assert_equal FACTORY::OUTPUT, FACTORY::EXTRACTOR.scan(FACTORY::INPUT)
+  end
 end # class TestTextExtractor < Minitest::Test

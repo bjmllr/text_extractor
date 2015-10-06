@@ -1,8 +1,9 @@
 require_relative "text_extractor/extraction"
+require_relative "text_extractor/record"
 
 # represents an extractor definition
 class TextExtractor
-  attr_reader :converters
+  attr_reader :converters, :records
 
   def initialize(&block)
     fail "#{self.class}.new requires a block" unless block
@@ -55,9 +56,27 @@ class TextExtractor
     Regexp.new(lines.join.strip)
   end
 
-  def record(&block)
+  def record(factory = nil, &block)
     fail "#{self.class}.record requires a block" unless block
-    @records << strip_record(instance_exec(&block))
+    @records << Record.new(strip_record(instance_exec(&block)), factory)
+  end
+
+  def find_factory_for(match)
+    return if no_factory?
+    return single_factory if single_factory
+    records[records.length.times.find_index { |i| match["__#{i}"] }].factory
+  end
+
+  def no_factory?
+    return @no_factory unless @no_factory.nil?
+    @no_factory = records.none?(&:factory)
+  end
+
+  def single_factory
+    return @single_factory unless @single_factory.nil?
+    @single_factory = records.all?(&:factory) &&
+                      records.map(&:factory).uniq.length == 1 &&
+                      records.first.factory
   end
 
   def scan(input)
@@ -65,10 +84,12 @@ class TextExtractor
   end
 
   def regexps
-    @records.map { |record| Regexp.new(record.source, Regexp::MULTILINE) }
+    @records.map.with_index do |record, i|
+      Regexp.new("(?<__#{i}>#{record.source})", Regexp::MULTILINE)
+    end
   end
 
   def to_re
     Regexp.union(*regexps)
   end
-end # class TextScan
+end # class TextExtractor

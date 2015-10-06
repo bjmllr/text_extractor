@@ -162,4 +162,41 @@ module Example
       }
     ] # OUTPUT = [
   end # module ValueConversion
+
+  module Factories
+    INPUT = Example.unindent(<<-END)
+        whowhere Rene Descartes France
+        where America
+        whowhere Bertrand Russell Wales
+        where China
+      END
+    # end INPUT
+
+    WhoWhere = Struct.new(:person, :place)
+    Where = Struct.new(:place)
+
+    EXTRACTOR = TextExtractor.new do
+      value :person, /\w+ \w+/
+      value :place, /\w+/
+
+      record(WhoWhere) do
+        /
+        whowhere #{person} #{place}
+        /
+      end
+
+      record(Where) do
+        /
+        where #{place}
+        /
+      end
+    end # EXTRACTOR = TextExtractor.new do
+
+    OUTPUT = [
+      WhoWhere.new("Rene Descartes", "France"),
+      Where.new("America"),
+      WhoWhere.new("Bertrand Russell", "Wales"),
+      Where.new("China")
+    ] # OUTPUT = [
+  end # module Factories
 end # module Example

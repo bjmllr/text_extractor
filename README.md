@@ -183,6 +183,53 @@ Regexp is provided for each one. These defaults are highly permissive,
 so it may be desirable to provide stricter ones depending on your
 application.
 
+### Factories
+
+By default, records are converted into hashes, but it's possible to
+specify a Struct or other factory object to use in place of a hash.
+
+```ruby
+extractor = TextExtractor.new do
+  WhoWhere = Struct.new(:person, :place)
+  Where = Struct.new(:place)
+
+  value :person, /\w+ \w+/
+  value :place, /\w+/
+
+  record(WhoWhere) do
+    /
+    whowhere #{person} #{place}
+    /
+  end
+
+  record(Where) do
+    /
+    where #{place}
+    /
+  end
+end
+```
+
+Given this input:
+
+```
+whowhere Rene Descartes France
+where America
+whowhere Bertrand Russell Wales
+where China
+```
+
+We should expect `extractor.scan` to return:
+
+```ruby
+[
+  WhoWhere.new("Rene Descartes", "France"),
+  Where.new("America"),
+  WhoWhere.new("Bertrand Russell", "Wales"),
+  Where.new("China")
+]
+```
+
 ## Tests
 
 TextExtractor uses MiniTest.  You can run the tests from the project root like so:

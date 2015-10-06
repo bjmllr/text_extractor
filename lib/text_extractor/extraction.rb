@@ -6,7 +6,6 @@ class TextExtractor
     def initialize(input, extractor)
       @input = input
       @extractor = extractor
-      @re = extractor.to_re
       @pos = 0
       @matches = []
       @last_match = nil
@@ -14,14 +13,20 @@ class TextExtractor
 
     def record_matches
       matches.map do |match|
-        match.names.flat_map do |name|
-          record_match(match, name)
-        end.each_slice(2).to_h
+        factory = extractor.find_factory_for(match)
+        record_match(match, factory)
       end
     end
 
-    def record_match(match, name)
-      return [] unless match[name]
+    def record_match(match, factory)
+      hash = match.names.flat_map do |name|
+        value_pair(match, name)
+      end.each_slice(2).to_h
+      factory ? factory.new(*hash.values) : hash
+    end
+
+    def value_pair(match, name)
+      return [] if !match[name] || name.start_with?("__")
       symbol = name.to_sym
       [symbol, convert_value(symbol, match[name])]
     end
@@ -33,7 +38,7 @@ class TextExtractor
 
     def scan
       loop do
-        match = input.match(re, pos)
+        match = input.match(extractor.to_re, pos)
         break unless match
         @pos = match.end(0)
         @matches << match
