@@ -179,13 +179,13 @@ module Example
       value :person, /\w+ \w+/
       value :place, /\w+/
 
-      record(WhoWhere) do
+      record(factory: WhoWhere) do
         /
         whowhere #{person} #{place}
         /
       end
 
-      record(Where) do
+      record(factory: Where) do
         /
         where #{place}
         /

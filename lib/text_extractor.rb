@@ -59,12 +59,9 @@ class TextExtractor
     Regexp.new(lines.join.strip)
   end
 
-  def record(factory = nil, fill: [], &block)
+  def record(**kwargs, &block)
     fail "#{self.class}.record requires a block" unless block
-    record = Record.new(strip_record(instance_exec(&block)), factory,
-                        fill: fill)
-    @fill[record] = fill
-    @records << record
+    @records << Record.new(strip_record(instance_exec(&block)), **kwargs)
   end
 
   def filldown(&block)

@@ -2,7 +2,7 @@ class TextExtractor
   class Record
     attr_reader :regexp, :factory
 
-    def initialize(regexp, factory = nil, fill: [])
+    def initialize(regexp, factory: nil, fill: [])
       @regexp = regexp
       @factory = factory
       @fill = Array(fill)
