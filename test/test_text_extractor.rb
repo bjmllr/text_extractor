@@ -22,7 +22,14 @@ class TestTextExtractor < Minitest::Test
   end
 
   FILLDOWN = Example::Filldown
-  def test_filldown
-    assert_equal FILLDOWN::OUTPUT, FILLDOWN::EXTRACTOR.scan(FILLDOWN::INPUT)
+
+  def test_filldown_with_fill
+    out = FILLDOWN::EXTRACTOR_FILL.scan(FILLDOWN::INPUT)
+    assert_equal FILLDOWN::OUTPUT_FILL, out
+  end
+
+  def test_filldown_with_no_fill
+    out = FILLDOWN::EXTRACTOR_NO_FILL.scan(FILLDOWN::INPUT)
+    assert_equal FILLDOWN::OUTPUT_NO_FILL, out
   end
 end # class TestTextExtractor < Minitest::Test

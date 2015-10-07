@@ -212,7 +212,7 @@ module Example
       END
     # end INPUT
 
-    EXTRACTOR = TextExtractor.new do
+    EXTRACTOR_FILL = TextExtractor.new do
       value :occupation, /\w+/
       value :name, /\w+ \w+/
 
@@ -229,11 +229,35 @@ module Example
       end
     end
 
-    OUTPUT = [
+    OUTPUT_FILL = [
       { occupation: "Philosophers", name: "Rene Descartes" },
       { occupation: "Philosophers", name: "Bertrand Russell" },
       { occupation: "Chemists", name: "Alfred Nobel" },
       { occupation: "Chemists", name: "Marie Curie" }
+    ] # OUTPUT = [
+
+    EXTRACTOR_NO_FILL = TextExtractor.new do
+      value :occupation, /\w+/
+      value :name, /\w+ \w+/
+
+      filldown do
+        /
+        #{occupation}:
+        /x
+      end
+
+      record do
+        /
+        #{name}
+        /x
+      end
+    end
+
+    OUTPUT_NO_FILL = [
+      { name: "Rene Descartes" },
+      { name: "Bertrand Russell" },
+      { name: "Alfred Nobel" },
+      { name: "Marie Curie" }
     ] # OUTPUT = [
   end # module Filldown
 end # module Example

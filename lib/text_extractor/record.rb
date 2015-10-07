@@ -2,13 +2,14 @@ class TextExtractor
   class Record
     attr_reader :regexp, :factory
 
-    def initialize(regexp, factory = nil)
+    def initialize(regexp, factory = nil, fill: [])
       @regexp = regexp
       @factory = factory
+      @fill = Array(fill)
     end
 
     def extraction(fill)
-      hash = fill.merge(yield)
+      hash = @fill.zip(fill.values_at(*@fill)).to_h.merge(yield)
       factory ? factory.new(*hash.values) : hash
     end
 
