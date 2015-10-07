@@ -19,19 +19,9 @@ class TextExtractor
     end
 
     def extraction_match(match)
-      record = extractor.find_record_for(match)
-      if record.is_a?(Filldown)
-        @fill.merge!(match_to_hash(match))
-        []
-      else
-        [record_match(record, match)]
+      extractor.find_record_for(match).extraction(@fill) do
+        match_to_hash(match)
       end
-    end
-
-    def record_match(record, match)
-      factory = record.factory
-      hash = @fill.merge(match_to_hash(match))
-      factory ? factory.new(*hash.values) : hash
     end
 
     def match_to_hash(match)

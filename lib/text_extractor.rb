@@ -1,11 +1,10 @@
 require_relative "text_extractor/extraction"
 require_relative "text_extractor/record"
+require_relative "text_extractor/filldown"
 
 # represents an extractor definition
 class TextExtractor
   attr_reader :converters, :records
-
-  Filldown = Class.new(Record)
 
   def initialize(&block)
     fail "#{self.class}.new requires a block" unless block

@@ -7,6 +7,11 @@ class TextExtractor
       @factory = factory
     end
 
+    def extraction(fill)
+      hash = fill.merge(yield)
+      factory ? factory.new(*hash.values) : hash
+    end
+
     def match(string, pos = 0)
       @regexp.match(string, pos)
     end
