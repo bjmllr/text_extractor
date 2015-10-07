@@ -232,8 +232,9 @@ We should expect `extractor.scan` to return:
 
 ### Filldown
 
-Some texts may contain groups of records that share specific
-attributes. For example:
+Some texts may contain groups of records among which some common
+attribute is only specified once. For example, consider this list of
+people, grouped by occupation:
 
 ```
 Philosophers:
