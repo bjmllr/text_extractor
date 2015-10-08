@@ -219,13 +219,13 @@ module Example
       filldown do
         /
         #{occupation}:
-        /x
+        /
       end
 
       record(fill: :occupation) do
         /
         #{name}
-        /x
+        /
       end
     end
 

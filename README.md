@@ -257,11 +257,10 @@ From this, we may want to extract the following data:
 ]
 ```
 
-A new concept is required to achieve this using a TextExtractor:
-`filldown`. A `filldown` is a special `record` that does not generate
-rows of data, rather it modifies any row that follows it. Here is the
-`TextExtractor`, using `filldown`, that will perform the desired
-extraction:
+The `filldown` special record type does not extract data into discrete
+rows, rather, when it matches, it modifies rows that follow it. Here
+is the `TextExtractor`, using `filldown`, that will perform the
+appropriate extraction:
 
 ```ruby
 TextExtractor.new do
@@ -270,7 +269,7 @@ TextExtractor.new do
 
   filldown do
     /
-    #{occupation}:$
+    #{occupation}:
     /
   end
 
