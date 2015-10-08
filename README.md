@@ -287,7 +287,7 @@ end
 TextExtractor uses MiniTest.  You can run the tests from the project root like so:
 
 ```
-ruby test/test_*.rb
+ruby test/all.rb
 ```
 
 ## Contributors
