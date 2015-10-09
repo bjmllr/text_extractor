@@ -99,4 +99,34 @@ class TestTextExtractorBgp < Minitest::Test
   def test_multiple_record_definitions_with_multiple_instances
     assert_equal OUTPUT, EXTRACTOR.scan(INPUT)
   end
+
+  SUMMARY_INPUT = unindent(<<-END)
+    Neighbor          AS  Up/Down  St/PfxRcd
+    111.11.1.11    65001 00:00:00 Idle
+    222.22.2.22    65002 00:00:10 12345
+    END
+
+  SUMMARY_EXTRACTOR = TextExtractor.new do
+    value :neighbor, /\S+/
+    integer :as
+    value :time, /\S+/
+    value(:prefixes, /\d+/) { |value| (value || 0).to_i }
+    value(:state, /\w+/) { |value| value || "Established" }
+
+    record { /#{neighbor}\s+#{as}\s+#{time}\s+(?:#{prefixes}|#{state})/ }
+  end
+
+  SUMMARY_OUTPUT = [
+    {
+      neighbor: "111.11.1.11",
+      as: 65001, time: "00:00:00", prefixes: 0, state: "Idle"
+    }, {
+      neighbor: "222.22.2.22",
+      as: 65002, time: "00:00:10", prefixes: 12345, state: "Established"
+    }
+  ]
+
+  def test_record_with_mutually_exclusive_values
+    assert_equal SUMMARY_OUTPUT, SUMMARY_EXTRACTOR.scan(SUMMARY_INPUT)
+  end
 end

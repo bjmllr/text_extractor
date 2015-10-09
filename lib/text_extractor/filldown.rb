@@ -1,7 +1,9 @@
+require_relative "record"
+
 class TextExtractor
   class Filldown < Record
-    def extraction(fill)
-      fill.merge!(yield)
+    def extraction(match, fill)
+      fill.merge!(extract_values(match))
       []
     end
   end # class Filldown < Record

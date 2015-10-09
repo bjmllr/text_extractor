@@ -1,7 +1,7 @@
 class TextExtractor
   # represents a single execution of a TextExtractor
   class Extraction
-    attr_reader :input, :extractor, :re, :pos, :matches
+    attr_reader :input, :extractor, :re, :pos, :matches, :values
 
     def initialize(input, extractor)
       @input = input
@@ -19,26 +19,7 @@ class TextExtractor
     end
 
     def extraction_match(match)
-      extractor.find_record_for(match).extraction(@fill) do
-        match_to_hash(match)
-      end
-    end
-
-    def match_to_hash(match)
-      match.names.flat_map do |name|
-        value_pair(match, name)
-      end.each_slice(2).to_h
-    end
-
-    def value_pair(match, name)
-      return [] if !match[name] || name.start_with?("__")
-      symbol = name.to_sym
-      [symbol, convert_value(symbol, match[name])]
-    end
-
-    def convert_value(symbol, value)
-      return value unless extractor.converters.key?(symbol)
-      extractor.converters[symbol].call(value)
+      extractor.find_record_for(match).extraction(match, @fill)
     end
 
     def scan

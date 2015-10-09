@@ -1,17 +1,20 @@
 require_relative "text_extractor/extraction"
-require_relative "text_extractor/record"
 require_relative "text_extractor/filldown"
+require_relative "text_extractor/record"
+require_relative "text_extractor/value"
 
 # represents an extractor definition
 class TextExtractor
-  attr_reader :converters, :records
+  attr_reader :records, :values
 
   def initialize(&block)
     fail "#{self.class}.new requires a block" unless block
-    @converters = {}
+    @values = {}
     @fill = {}
+    @values = {}
     @records = []
     @filldowns = []
+    @current_record_values = []
     instance_exec(&block)
   end
 
@@ -28,8 +31,11 @@ class TextExtractor
   end
 
   def value(id, re, &block)
-    @converters[id] = block if block_given?
-    define_singleton_method(id) { "(?<#{id}>#{re.source})" }
+    val = @values[id] = Value.new(id, re, &block)
+    define_singleton_method(id) do
+      @current_record_values << val
+      "(?<#{id}>#{re.source})"
+    end
   end
 
   def boolean(id, re = Patterns::BOOLEAN)
@@ -59,14 +65,17 @@ class TextExtractor
     Regexp.new(lines.join.strip)
   end
 
-  def record(**kwargs, &block)
+  def record(klass = Record, **kwargs, &block)
     fail "#{self.class}.record requires a block" unless block
-    @records << Record.new(strip_record(instance_exec(&block)), **kwargs)
+    @current_record_values = []
+    regexp = strip_record(instance_exec(&block))
+    kwargs[:values] = @current_record_values
+    @records << klass.new(regexp, **kwargs)
   end
 
-  def filldown(&block)
+  def filldown(**kwargs, &block)
     fail "#{self.class}.filldown requires a block" unless block
-    @records << Filldown.new(strip_record(instance_exec(&block)))
+    record(Filldown, **kwargs, &block)
   end
 
   def find_record_for(match)
