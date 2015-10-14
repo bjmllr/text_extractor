@@ -25,6 +25,10 @@ class TextExtractor
       @regexp.source
     end
 
+    def options
+      @regexp.options
+    end
+
     def extract_fills(fill)
       @fill.zip(fill.values_at(*@fill)).to_h
     end

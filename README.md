@@ -102,7 +102,7 @@ The `record` regexp syntax has a few differences to standard regexps which are i
 
 First, the interpolated sections (`#{value_name}`) will match the same-named values defined previously, and the matched values will be placed into a hash, one per instance of the record in the input.  This is implemented using named capture groups, but is more concise and modular.
 
-Second, whitespace at the beginning or end of the regexp is removed, but not internally, which keeps the regexp visually similar to the text it is meant to match, in contrast with an extended regexp.  Also in contrast with an extended regexp, it is not possible to place comments inside a `record` regexp, but the interpolated `value`s serve a similar purpose in most cases.
+Second, whitespace at the beginning or end of the regexp is removed, but not internally, which keeps the regexp visually similar to the text it is meant to match, in contrast with an extended regexp.  The extended, case-insensitive, and multiline options will be honored if they are used.
 
 Third, record regexps are unindented according to the indentation of the last line, so it's possible to nicely represent an unindented section of text in indented code, or an indented section of text, by indenting the internal regexp lines relative to the closing `/`.
 

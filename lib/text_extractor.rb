@@ -62,7 +62,7 @@ class TextExtractor
     lines = regexp.source.lines
     prefix = lines.last
     lines.map! { |s| s.gsub("#{prefix}", "") } if prefix =~ /\A\s*\z/
-    Regexp.new(lines.join.strip)
+    Regexp.new(lines.join.strip, regexp.options)
   end
 
   def record(klass = Record, **kwargs, &block)
@@ -88,7 +88,7 @@ class TextExtractor
 
   def regexps
     @records.map.with_index do |record, i|
-      Regexp.new("(?<__#{i}>#{record.source})", Regexp::MULTILINE)
+      Regexp.new("(?<__#{i}>#{record.source})", record.options)
     end
   end
 

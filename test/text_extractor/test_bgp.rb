@@ -129,4 +129,25 @@ class TestTextExtractorBgp < Minitest::Test
   def test_record_with_mutually_exclusive_values
     assert_equal SUMMARY_OUTPUT, SUMMARY_EXTRACTOR.scan(SUMMARY_INPUT)
   end
+
+  EXTENDED_SUMMARY_EXTRACTOR = TextExtractor.new do
+    value :neighbor, /\S+/
+    integer :as
+    value :time, /\S+/
+    value(:prefixes, /\d+/) { |value| (value || 0).to_i }
+    value(:state, /\w+/) { |value| value || "Established" }
+
+    record do
+      /
+      #{neighbor}\s+
+      #{as}\s+
+      #{time}\s+
+      (?:#{prefixes}|#{state})
+      /x
+    end
+  end
+
+  def test_record_preserving_regexp_options
+    assert_equal SUMMARY_OUTPUT, EXTENDED_SUMMARY_EXTRACTOR.scan(SUMMARY_INPUT)
+  end
 end
