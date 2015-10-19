@@ -176,7 +176,8 @@ core and standard library:
 * `integer`
 * `float`
 * `rational`
-* `ipaddr`
+* `ipaddr` (no prefix length)
+* `ipnetaddr` (includes prefix length)
 
 Since such types have unambiguous string representations, a minimal
 Regexp is provided for each one. These defaults are highly permissive,

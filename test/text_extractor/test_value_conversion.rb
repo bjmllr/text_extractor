@@ -11,6 +11,7 @@ class TestTextExtractorValueConverstion < Minitest::Test
      Rational: 1/5
      IPv4 Address: 1.1.1.16
      IPv6 Address: 2001::17
+     IP Network: 1.1.1.18/30
      Boolean: True
      Custom: Reverse this!
     END
@@ -23,6 +24,7 @@ class TestTextExtractorValueConverstion < Minitest::Test
     rational :some_rational
     ipaddr :some_ipv4
     ipaddr :some_ipv6
+    ipnetaddr :some_ipnet
     boolean :some_boolean
     value(:reversed, /[^\n]+/) { |val| val.reverse }
 
@@ -35,6 +37,7 @@ class TestTextExtractorValueConverstion < Minitest::Test
        Rational: #{some_rational}
        IPv4 Address: #{some_ipv4}
        IPv6 Address: #{some_ipv6}
+       IP Network: #{some_ipnet}
        Boolean: #{some_boolean}
        Custom: #{reversed}
       /
@@ -50,6 +53,7 @@ class TestTextExtractorValueConverstion < Minitest::Test
       some_rational: Rational(1, 5),
       some_ipv4: IPAddr.new("1.1.1.16"),
       some_ipv6: IPAddr.new("2001:0:0:0:0:0:0:17"),
+      some_ipnet: IPAddr.new("1.1.1.18/30"),
       some_boolean: true,
       reversed: "!siht esreveR"
     }
