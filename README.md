@@ -152,9 +152,9 @@ Successful output will be an array of hashes.  For our example, we can expect th
 A block passed to `value` will specify how the extracted string should be interpreted. In the above example, were we to use the following value definitions:
 
 ```ruby
-value(:asn_remote) { |str| str.to_i }
-value(:prefixes_received) { |str| str.to_i }
-value(:prefixes_advertised) { |str| str.to_i }
+value(:asn_remote, /\d+/) { |str| str.to_i }
+value(:prefixes_received, /\d+/) { |str| str.to_i }
+value(:prefixes_advertised, /\d+/) { |str| str.to_i }
 ```
 
 These values would be converted from strings to integers before being
