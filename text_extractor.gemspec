@@ -1,15 +1,19 @@
 require File.expand_path('../lib/text_extractor/version', __FILE__)
 
-Gem::Specification.new do |s|
-  s.name = 'text_extractor'
-  s.version = TextExtractor.version
-  s.platform = Gem::Platform::RUBY
-  s.summary = 'Easily extract data from text'
-  s.author = 'Ben Miller'
-  s.email = 'bjmllr@gmail.com'
-  s.homepage = 'https://github.com/bjmllr/text_extractor'
-  s.license = 'MIT'
-  s.required_ruby_version = '>= 2.0.0'
-  s.files = Dir['lib/**/*.rb']
-  s.require_path = 'lib'
+Gem::Specification.new do |spec|
+  spec.name = 'text_extractor'
+  spec.version = TextExtractor.version
+  spec.platform = Gem::Platform::RUBY
+  spec.summary = 'Easily extract data from text'
+  spec.author = 'Ben Miller'
+  spec.email = 'bjmllr@gmail.com'
+  spec.homepage = 'https://github.com/bjmllr/text_extractor'
+  spec.license = 'GPL-3.0'
+  spec.required_ruby_version = '>= 2.1.0'
+  spec.files = Dir['lib/**/*.rb']
+  spec.require_path = 'lib'
+
+  spec.add_development_dependency 'bundler', '~> 1.0'
+  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'minitest', '~> 5.0'
 end

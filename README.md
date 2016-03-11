@@ -1,14 +1,27 @@
 ## TextExtractor: Easily Extract Data From Text
 
+[![Gem Version](https://badge.fury.io/rb/text_extractor.svg)](https://rubygems.org/gems/text_extractor)
+[![Build Status](https://travis-ci.org/bjmllr/text_extractor.svg)](https://travis-ci.org/bjmllr/text_extractor) 
+
 TextExtractor is a simple DSL for extracting data from text which follows a simple, consistent format, but which is not a well known format such as XML, JSON, or YAML, and for which conventional regular expression syntax might be too bulky or hard to follow.  It is inspired by the TextFSM project (https://code.google.com/p/textfsm/).
 
 ## Installation
 
-Add this to your Gemfile:
+Ruby 2.1 or later is required. There are no other dependencies.
 
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'text_extractor'
 ```
-gem "text_extractor"
-```
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install text_extractor
 
 TextExtractor requires Ruby 2.  There are no other dependencies.
 
@@ -291,18 +304,18 @@ end
 
 ```
 
-## Tests
+## Development
 
-TextExtractor uses MiniTest.  You can run the tests from the project root like so:
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-```
-ruby test/all.rb
-```
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
-## Contributors
+## Contributing
 
-Pull requests with tests are welcome.
+Bug reports and pull requests are welcome on GitHub at https://github.com/bjmllr/text_extractor. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
-## License
+## Copyright and License
 
-http://mit-license.org/
+Copyright (C) 2016 Ben Miller
+
+The gem is available as free software under the terms of the [GNU General Public License, Version 3](http://www.gnu.org/licenses/gpl-3.0.html).
