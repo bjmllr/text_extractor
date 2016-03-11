@@ -14,7 +14,19 @@ class TextExtractor
       extracted = {}.merge!(@default_values)
                     .merge!(extract_fills fill)
                     .merge!(extract_values match)
-      factory ? factory.new(*extracted.values) : extracted
+      build_extraction(extracted)
+    end
+
+    def build_extraction(extracted)
+      case factory
+      when Hash
+        klass, params = factory.first
+        klass.new(*extracted.values_at(*params))
+      when Class
+        factory.new(*extracted.values)
+      else
+        extracted
+      end
     end
 
     def match(string, pos = 0)

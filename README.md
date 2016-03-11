@@ -231,6 +231,14 @@ We should expect `extractor.scan` to return:
 ]
 ```
 
+By default, the extracted values will be passed to the constructor in the order they appear in the record definition, but an explicit order can be given:
+
+```ruby
+record(factory: { WhoWhere => [:person, :place] }) do
+  /wherewho: #{place} #{person}/
+end
+```
+
 ### Filldown
 
 Some texts may contain groups of records among which some common
