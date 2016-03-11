@@ -7,7 +7,7 @@ TextExtractor is a simple DSL for extracting data from text which follows a simp
 Add this to your Gemfile:
 
 ```
-gem "text_extractor", git: "https://github.com/bjmllr/text_extractor.git"
+gem "text_extractor"
 ```
 
 TextExtractor requires Ruby 2.  There are no other dependencies.
