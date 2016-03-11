@@ -1,5 +1,5 @@
-require_relative "../test_helper"
-require "text_extractor"
+require_relative '../test_helper'
+require 'text_extractor'
 
 # examples based on the output of various "show bgp" commands on certain
 # router appliances
@@ -31,36 +31,36 @@ class TestTextExtractorBgp < Minitest::Test
 
   OUTPUT = [
     {
-      bgp_neighbor: "foo",
-      vrf_name: "bar",
-      asn_remote: "1243",
-      description: "foobar",
-      address_family: "spam eggs",
-      bgp_state: "confusion",
-      policy_in: "myinpolicy",
-      policy_out: "myoutpolicy extra",
-      prefixes_received: "31337",
-      prefixes_advertised: "23"
+      bgp_neighbor: 'foo',
+      vrf_name: 'bar',
+      asn_remote: '1243',
+      description: 'foobar',
+      address_family: 'spam eggs',
+      bgp_state: 'confusion',
+      policy_in: 'myinpolicy',
+      policy_out: 'myoutpolicy extra',
+      prefixes_received: '31337',
+      prefixes_advertised: '23'
     },
 
     {
-      bgp_neighbor: "kilroy",
-      vrf_name: "washere"
+      bgp_neighbor: 'kilroy',
+      vrf_name: 'washere'
     },
 
     {
-      bgp_neighbor: "bar",
-      vrf_name: "foo",
-      asn_remote: "1243",
-      description: "barfoo",
-      address_family: "beer 99",
-      bgp_state: "disarray",
-      policy_in: "otherin 22",
-      policy_out: "otherout",
-      prefixes_received: "1337",
-      prefixes_advertised: "0"
+      bgp_neighbor: 'bar',
+      vrf_name: 'foo',
+      asn_remote: '1243',
+      description: 'barfoo',
+      address_family: 'beer 99',
+      bgp_state: 'disarray',
+      policy_in: 'otherin 22',
+      policy_out: 'otherout',
+      prefixes_received: '1337',
+      prefixes_advertised: '0'
     }
-  ]
+  ].freeze
 
   EXTRACTOR = TextExtractor.new do
     value :bgp_neighbor, /\S+/
@@ -111,20 +111,20 @@ class TestTextExtractorBgp < Minitest::Test
     integer :as
     value :time, /\S+/
     value(:prefixes, /\d+/) { |value| (value || 0).to_i }
-    value(:state, /\w+/) { |value| value || "Established" }
+    value(:state, /\w+/) { |value| value || 'Established' }
 
     record { /#{neighbor}\s+#{as}\s+#{time}\s+(?:#{prefixes}|#{state})/ }
   end
 
   SUMMARY_OUTPUT = [
     {
-      neighbor: "111.11.1.11",
-      as: 65001, time: "00:00:00", prefixes: 0, state: "Idle"
+      neighbor: '111.11.1.11',
+      as: 65_001, time: '00:00:00', prefixes: 0, state: 'Idle'
     }, {
-      neighbor: "222.22.2.22",
-      as: 65002, time: "00:00:10", prefixes: 12345, state: "Established"
+      neighbor: '222.22.2.22',
+      as: 65_002, time: '00:00:10', prefixes: 12_345, state: 'Established'
     }
-  ]
+  ].freeze
 
   def test_record_with_mutually_exclusive_values
     assert_equal SUMMARY_OUTPUT, SUMMARY_EXTRACTOR.scan(SUMMARY_INPUT)
@@ -135,7 +135,7 @@ class TestTextExtractorBgp < Minitest::Test
     integer :as
     value :time, /\S+/
     value(:prefixes, /\d+/) { |value| (value || 0).to_i }
-    value(:state, /\w+/) { |value| value || "Established" }
+    value(:state, /\w+/) { |value| value || 'Established' }
 
     record do
       /

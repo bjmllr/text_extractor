@@ -1,5 +1,5 @@
-require_relative "../test_helper"
-require "text_extractor"
+require_relative '../test_helper'
+require 'text_extractor'
 
 class TestTextExtractorFactories < Minitest::Test
   INPUT = unindent(<<-END)
@@ -20,11 +20,11 @@ class TestTextExtractorFactories < Minitest::Test
   end
 
   OUTPUT = [
-    WhoWhere.new("Rene Descartes", "France"),
-    Where.new("America"),
-    WhoWhere.new("Bertrand Russell", "Wales"),
-    Where.new("China")
-  ]
+    WhoWhere.new('Rene Descartes', 'France'),
+    Where.new('America'),
+    WhoWhere.new('Bertrand Russell', 'Wales'),
+    Where.new('China')
+  ].freeze
 
   def test_factories
     assert_equal OUTPUT, EXTRACTOR.scan(INPUT)

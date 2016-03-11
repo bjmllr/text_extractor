@@ -1,6 +1,6 @@
-require "ipaddr"
-require_relative "../test_helper"
-require "text_extractor"
+require 'ipaddr'
+require_relative '../test_helper'
+require 'text_extractor'
 
 class TestTextExtractorValueConverstion < Minitest::Test
   INPUT = unindent(<<-END)
@@ -26,7 +26,7 @@ class TestTextExtractorValueConverstion < Minitest::Test
     ipaddr :some_ipv6
     ipnetaddr :some_ipnet
     boolean :some_boolean
-    value(:reversed, /[^\n]+/) { |val| val.reverse }
+    value(:reversed, /[^\n]+/, &:reverse)
 
     record do
       /
@@ -46,18 +46,18 @@ class TestTextExtractorValueConverstion < Minitest::Test
 
   OUTPUT = [
     {
-      some_string: "1111",
+      some_string: '1111',
       some_integer: 12,
       some_float: 13.0,
       some_fraction: 0.14,
       some_rational: Rational(1, 5),
-      some_ipv4: IPAddr.new("1.1.1.16"),
-      some_ipv6: IPAddr.new("2001:0:0:0:0:0:0:17"),
-      some_ipnet: IPAddr.new("1.1.1.18/30"),
+      some_ipv4: IPAddr.new('1.1.1.16'),
+      some_ipv6: IPAddr.new('2001:0:0:0:0:0:0:17'),
+      some_ipnet: IPAddr.new('1.1.1.18/30'),
       some_boolean: true,
-      reversed: "!siht esreveR"
+      reversed: '!siht esreveR'
     }
-  ]
+  ].freeze
 
   def test_value_conversions
     assert_equal OUTPUT, EXTRACTOR.scan(INPUT)

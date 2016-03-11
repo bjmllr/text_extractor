@@ -1,5 +1,5 @@
-require_relative "../test_helper"
-require "text_extractor"
+require_relative '../test_helper'
+require 'text_extractor'
 
 class TestTextExtractorFilldown < Minitest::Test
   INPUT = unindent(<<-END)
@@ -20,11 +20,11 @@ class TestTextExtractorFilldown < Minitest::Test
   end
 
   OUTPUT_FILL = [
-    { occupation: "Philosophers", name: "Rene Descartes" },
-    { occupation: "Philosophers", name: "Bertrand Russell" },
-    { occupation: "Chemists", name: "Alfred Nobel" },
-    { occupation: "Chemists", name: "Marie Curie" }
-  ]
+    { occupation: 'Philosophers', name: 'Rene Descartes' },
+    { occupation: 'Philosophers', name: 'Bertrand Russell' },
+    { occupation: 'Chemists', name: 'Alfred Nobel' },
+    { occupation: 'Chemists', name: 'Marie Curie' }
+  ].freeze
 
   EXTRACTOR_NO_FILL = TextExtractor.new do
     value(:occupation, /\w+/)
@@ -34,11 +34,11 @@ class TestTextExtractorFilldown < Minitest::Test
   end
 
   OUTPUT_NO_FILL = [
-    { name: "Rene Descartes" },
-    { name: "Bertrand Russell" },
-    { name: "Alfred Nobel" },
-    { name: "Marie Curie" }
-  ]
+    { name: 'Rene Descartes' },
+    { name: 'Bertrand Russell' },
+    { name: 'Alfred Nobel' },
+    { name: 'Marie Curie' }
+  ].freeze
 
   def test_filldown_with_fill
     assert_equal OUTPUT_FILL, EXTRACTOR_FILL.scan(INPUT)

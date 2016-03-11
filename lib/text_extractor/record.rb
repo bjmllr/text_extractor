@@ -12,8 +12,8 @@ class TextExtractor
 
     def extraction(match, fill)
       extracted = {}.merge!(@default_values)
-                  .merge!(extract_fills fill)
-                  .merge!(extract_values match)
+                    .merge!(extract_fills fill)
+                    .merge!(extract_values match)
       factory ? factory.new(*extracted.values) : extracted
     end
 

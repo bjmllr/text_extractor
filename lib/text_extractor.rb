@@ -1,14 +1,14 @@
-require_relative "text_extractor/extraction"
-require_relative "text_extractor/filldown"
-require_relative "text_extractor/record"
-require_relative "text_extractor/value"
+require_relative 'text_extractor/extraction'
+require_relative 'text_extractor/filldown'
+require_relative 'text_extractor/record'
+require_relative 'text_extractor/value'
 
 # represents an extractor definition
 class TextExtractor
   attr_reader :records, :values
 
   def initialize(&block)
-    fail "#{self.class}.new requires a block" unless block
+    raise "#{self.class}.new requires a block" unless block
     @values = {}
     @fill = {}
     @values = {}
@@ -21,7 +21,7 @@ class TextExtractor
   module Patterns
     INTEGER = /\d+/
     FLOAT = /\d+\.?|\d*\.\d+/
-    RATIONAL = %r(\d+/\d+)
+    RATIONAL = %r{\d+/\d+}
     IPV4 = /[0-9.]{7,15}/
     IPV6 = /[:a-fA-F0-9\.]{2,45}/
     IPADDR = Regexp.union(IPV4, IPV6)
@@ -68,12 +68,12 @@ class TextExtractor
   def strip_record(regexp)
     lines = regexp.source.lines
     prefix = lines.last
-    lines.map! { |s| s.gsub("#{prefix}", "") } if prefix =~ /\A\s*\z/
+    lines.map! { |s| s.gsub(prefix.to_s, '') } if prefix =~ /\A\s*\z/
     Regexp.new(lines.join.strip, regexp.options)
   end
 
   def record(klass = Record, **kwargs, &block)
-    fail "#{self.class}.record requires a block" unless block
+    raise "#{self.class}.record requires a block" unless block
     @current_record_values = []
     regexp = strip_record(instance_exec(&block))
     kwargs[:values] = @current_record_values
@@ -81,7 +81,7 @@ class TextExtractor
   end
 
   def filldown(**kwargs, &block)
-    fail "#{self.class}.filldown requires a block" unless block
+    raise "#{self.class}.filldown requires a block" unless block
     record(Filldown, **kwargs, &block)
   end
 
