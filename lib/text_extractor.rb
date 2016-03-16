@@ -66,10 +66,10 @@ class TextExtractor
   end
 
   def strip_record(regexp, strip: nil)
-    lines = regexp.source.lines
+    lines = regexp.source.split("\n")
     prefix = lines.last
     strip_record_by_line(lines, prefix, strip)
-    Regexp.new(lines.join.strip, regexp.options)
+    Regexp.new(lines.join("\n").strip, regexp.options)
   end
 
   def strip_record_by_line(lines, prefix, strip)
