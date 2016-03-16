@@ -20,12 +20,34 @@ class TextExtractor
     def build_extraction(extracted)
       case factory
       when Hash
-        klass, params = factory.first
-        klass.new(*extracted.values_at(*params))
+        build_extraction_by_hash(extracted)
+      when Set
+        build_extraction_by_set(extracted)
       when Class
-        factory.new(*extracted.values)
+        build_extraction_by_class(extracted)
       else
         extracted
+      end
+    end
+
+    def build_extraction_by_hash(extracted)
+      klass, params = factory.first
+      klass.new(*extracted.values_at(*params))
+    end
+
+    def build_extraction_by_set(extracted)
+      klass, params = factory.first
+      values = params.each_with_object({}) do |param, hash|
+        hash[param] = extracted[param]
+      end
+      klass.new(**values)
+    end
+
+    def build_extraction_by_class(extracted)
+      if factory.ancestors.include?(Struct)
+        factory.new(*extracted.values)
+      else
+        factory.new(**extracted)
       end
     end
 

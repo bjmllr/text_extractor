@@ -244,13 +244,27 @@ We should expect `extractor.scan` to return:
 ]
 ```
 
-By default, the extracted values will be passed to the constructor in the order they appear in the record definition, but an explicit order can be given:
+If the factory class is not a `Struct` subclass, then the extracted values will be passed to `new` as keyword arguments. In this case, the call to `new` can be thought of as looking something like
+
+```ruby
+WhoWhere.new(place: match[:place], person: match[:person])
+```
+
+If the factory class is a `Struct` subclass, the extracted values will be passed to `new` as positional arguments in the order they appear in the extractor definition, but an explicit order can be given:
 
 ```ruby
 record(factory: { WhoWhere => [:person, :place] }) do
   /wherewho: #{place} #{person}/
 end
 ```
+
+The implied call to `new` can then be thought of as looking something like
+
+```ruby
+WhoWhere.new(match[:person], match[:place])
+```
+
+Giving an explicit order in this way will cause positional arguments to be used even if the factory is not a `Struct` subclass. If you wish to use keyword arguments instead of positional arguments, pass the list of value names as a `Set` instead of an `Array`.
 
 ### Strip whitespace between lines
 
