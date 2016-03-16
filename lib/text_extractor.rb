@@ -77,9 +77,9 @@ class TextExtractor
 
     lines.map! { |s| s.gsub(prefix.to_s, '') }
     case strip
-    when :left  then lines.map! { |s| "\\s*#{s.lstrip}" }
-    when :right then lines.map! { |s| "#{s.rstrip}\\s*" }
-    when :both  then lines.map! { |s| "\\s*#{s.strip}\\s*" }
+    when :left  then lines.map! { |s| "\[ \t\r\f]*#{s.lstrip}" }
+    when :right then lines.map! { |s| "#{s.rstrip}\[ \t\r\f]*" }
+    when :both  then lines.map! { |s| "\[ \t\r\f]*#{s.strip}\[ \t\r\f]*" }
     end
   end
 
