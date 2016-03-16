@@ -252,6 +252,47 @@ record(factory: { WhoWhere => [:person, :place] }) do
 end
 ```
 
+### Strip whitespace between lines
+
+Some texts may use whitespace inconsistently. To ignore whitespace at the start and/or end of each line, pass the `strip` option. The three possible values are `:left` (ignore whitespace at the starts of lines), `:right` (ignore whitespace at the ends of lines), and `:both`.
+
+For example, this extractor:
+
+```ruby
+value :this, /\w+/
+value :that, /\w+/
+
+record(strip: :left) do
+  /
+  This: #{this}
+  That: #{that}
+  /
+end
+```
+
+scans this text:
+
+```ruby
+This: a
+ That: b
+ This: c
+That: d
+```
+
+produces this result:
+
+```ruby
+[
+  {
+    this: "a",
+    that: "b"
+  }, {
+    this: "c",
+    that: "d"
+  }
+]
+```
+
 ### Filldown
 
 Some texts may contain groups of records among which some common
