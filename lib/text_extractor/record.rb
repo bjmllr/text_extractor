@@ -57,6 +57,8 @@ class TextExtractor
       def to_proc
         if @params
           explicit
+        elsif @klass.is_a?(Proc)
+          @klass
         elsif @klass
           implicit
         end

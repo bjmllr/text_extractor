@@ -266,6 +266,8 @@ WhoWhere.new(match[:person], match[:place])
 
 Giving an explicit order in this way will cause positional arguments to be used even if the factory is not a `Struct` subclass. If you wish to use keyword arguments instead of positional arguments, pass the list of value names as a `Set` instead of an `Array`.
 
+It's also possible to give a `Proc` as the factory. In this case, the proc will be called with the hash of extracted values as an argument.
+
 ### Strip whitespace between lines
 
 Some texts may use whitespace inconsistently. To ignore whitespace at the start and/or end of each line, pass the `strip` option. The three possible values are `:left` (ignore whitespace at the starts of lines), `:right` (ignore whitespace at the ends of lines), and `:both`.
