@@ -68,13 +68,17 @@ class TextExtractor
   def strip_record(regexp, strip: nil)
     lines = regexp.source.split("\n")
     prefix = lines.last
-    strip_record_by_line(lines, prefix, strip)
-    Regexp.new(lines.join("\n").strip, regexp.options)
+
+    if prefix =~ /\A\s*\z/
+      lines.pop if lines.first =~ /\A\s*\z/
+      lines.shift
+      strip_record_by_line(lines, prefix, strip)
+    end
+
+    Regexp.new(lines.join("\n"), regexp.options)
   end
 
   def strip_record_by_line(lines, prefix, strip)
-    return unless prefix =~ /\A\s*\z/
-
     lines.map! { |s| s.gsub(prefix.to_s, '') }
     case strip
     when :left  then lines.map! { |s| "\[ \t\r\f]*#{s.lstrip}" }
