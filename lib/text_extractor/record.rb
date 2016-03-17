@@ -1,10 +1,10 @@
 class TextExtractor
   class Record
-    attr_reader :regexp, :factory, :values
+    attr_reader :regexp, :values
 
     def initialize(regexp, factory: nil, values: [], fill: [])
       @regexp = regexp
-      @factory = factory
+      @constructor = analyze_factory(factory)
       @values = values.map { |val| [val.id, val] }.to_h
       @default_values = values.map { |val| [val.id, nil] }.to_h
       @fill = Array(fill)
@@ -17,38 +17,49 @@ class TextExtractor
       build_extraction(extracted)
     end
 
-    def build_extraction(extracted)
+    def analyze_factory(factory)
       case factory
       when Hash
-        build_extraction_by_hash(extracted)
-      when Set
-        build_extraction_by_set(extracted)
+        analyze_factory_explicit(factory)
       when Class
-        build_extraction_by_class(extracted)
-      else
-        extracted
+        analyze_factory_implicit(factory)
       end
     end
 
-    def build_extraction_by_hash(extracted)
+    def analyze_factory_explicit(factory)
       klass, params = factory.first
-      klass.new(*extracted.values_at(*params))
-    end
-
-    def build_extraction_by_set(extracted)
-      klass, params = factory.first
-      values = params.each_with_object({}) do |param, hash|
-        hash[param] = extracted[param]
+      case params
+      when Array
+        analyze_factory_explicit_positional(klass, params)
+      when Set
+        analyze_factory_explicit_keyword(klass, params)
       end
-      klass.new(**values)
     end
 
-    def build_extraction_by_class(extracted)
+    def analyze_factory_explicit_positional(klass, params)
+      ->(extracted) { klass.new(*extracted.values_at(*params)) }
+    end
+
+    def analyze_factory_explicit_keyword(klass, params)
+      lambda do |extracted|
+        values = params.each_with_object({}) do |param, hash|
+          hash[param] = extracted[param]
+        end
+        klass.new(**values)
+      end
+    end
+
+    def analyze_factory_implicit(factory)
       if factory.ancestors.include?(Struct)
-        factory.new(*extracted.values)
+        ->(extracted) { factory.new(*extracted.values) }
       else
-        factory.new(**extracted)
+        ->(extracted) { factory.new(**extracted) }
       end
+    end
+
+    def build_extraction(extracted)
+      return extracted unless @constructor
+      @constructor.call(extracted)
     end
 
     def match(string, pos = 0)
