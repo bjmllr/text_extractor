@@ -361,6 +361,27 @@ end
 
 ```
 
+### Line directives
+
+Line directives are additional regular expression syntax available in record definitions. They are placed at the end of a line, and have effects on that entire line, including the trailing newline. A line directive is indicated by `#.` (preceeded by a space) appearing anywhere in a line of a `record`. Any preceeding spaces, the `#.`, and any following characters will be ignored. To prevent a regexp fragment `/ #./` from being interpreted as a directive in a record definition, instead write it as `/\s#./` or `/[ ]#./`.
+
+Regular expressions containing line directives are compiled to standard Ruby regular expressions via `TextExtractor.expand_directives`.
+
+The following directives are available:
+
+* `#. ` - Comment. There is a space after the `.`. Any text can be placed after the space and it will be ignored. Comments can appear after other directives, using a chain like `#.rest. blah blah`.
+* `#.begin` / `#.end` - Grouping. Compiles to regex `(?:...)`. Lines between `#.begin` and `#.end` will be added to a *line group*. Line groups do nothing on their own, but they can change the meaning of other directives. Other than directives, the lines these directives appear on will be ignored. Line groups can be nested. If a word is placed after `#.begin`.
+* `#.maybe` - Optional. Compiles to regex `?`. Make this line optional. Equivalent to `#.repeat 0,1`. A `#.maybe` directive can apply to an entire line group, using a chain like `#.end.maybe`.
+* `#.any` / `#.end` - Alternation. Compiles to regex `(?:...|...)`. Form a group, as with `#.begin` / `#.end`, matching any one of the lines (or nested groups) in the group, but not more than one. The lines that these directives appear on will be ignored.
+* `#.repeat(n,m)` - Repetition. Compiles to regex `{n,m}`. Allow the line to appear the specified number of times. Note that the pattern is repeated, but the matching text might not be exactly the same each time. If only `n` (with no comma) is given, the line must appear exactly n times. If `n,` (with a comma) is given, the line must appear at least n times, but there is no upper limit. `#.repeat(1,)` is therefore equivalent to regex `+`. If both `n` and `m` are omitted, the line may appear 0 or more times (equivalent to regex `*`). A `#.repeat` directive can apply to an entire line group, using a chain like `#.end.repeat`.
+* `#.rest` - Ignore to end of line. Any trailing characters at the end of the line will be skipped. Equivalent to `[^\n\]*`.
+
+Line directives can be used in a `Regexp` outside of a record definition. `TextExtractor.expand_directives(regexp)` will convert a regexp containing line directives to normal regexp syntax. To gain access to this method without loading all of TextExtractor, `require 'text_extractor/directives'`.
+
+Outside of a record definition, `#.begin` will accept arguments starting with `?` as special capture group syntax, allowing lookaround assertions and named capture groups to be used, for example `#.begin(?<=)` will place the line group in a positive lookbehind assertion. The meaning of the non-capturing group identifier, `?:` is reversed here, since the default is not to capture in a line group. These features will also work inside a record definition, but beware that TextExtractor uses both named and unnamed capture groups internally, so attempting to use either kind of capture group directly can cause unexpected behavior.
+
+If the last line of a group appears on the last line of an expression, with no trailing newline, the last literal line of the expression will also not have a newline. This means that `/asdf #.maybe/` will compile to `/(?:asdf)?/` and not `/(?:asdf\n)?/` as one might expect.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
