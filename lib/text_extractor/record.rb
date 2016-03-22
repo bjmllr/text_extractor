@@ -1,9 +1,11 @@
+require_relative 'directives'
+
 class TextExtractor
   class Record
     attr_reader :regexp, :factory, :values
 
-    def initialize(regexp, factory: nil, values: [], fill: [])
-      @regexp = regexp
+    def initialize(regexp, factory: nil, values: [], fill: [], directives: true)
+      @regexp = expand_regexp(regexp, directives)
       @factory = factory
       @constructor = FactoryAnalyzer.new(factory).to_proc
       @values = values.map { |val| [val.id, val] }.to_h
@@ -21,6 +23,14 @@ class TextExtractor
     def build_extraction(extracted)
       return extracted unless @constructor
       @constructor.call(extracted)
+    end
+
+    def expand_regexp(regexp, directives)
+      if directives
+        TextExtractor.expand_directives(regexp)
+      else
+        regexp
+      end
     end
 
     def match(string, pos = 0)
