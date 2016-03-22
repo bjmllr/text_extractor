@@ -164,5 +164,11 @@ two #.repeat(2)
 ){2})/
       assert_equal expected, expand(input)
     end
+
+    def test_rest
+      input = /asdf #.rest/
+      expected = /asdf[^\n]*/
+      assert_equal expected, expand(input)
+    end
   end
 end

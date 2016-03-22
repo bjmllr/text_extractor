@@ -44,7 +44,8 @@ class TextExtractor
       'begin'  => { class: Begin, arguments: :parsed },
       'end'    => { class: End },
       'maybe'  => { class: Maybe },
-      'repeat' => { class: Repeat, arguments: :parse }
+      'repeat' => { class: Repeat, arguments: :parse },
+      'rest'   => { class: Rest }
     }.freeze
     private_constant :DIRECTIVE_MAP
 

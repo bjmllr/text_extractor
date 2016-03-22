@@ -69,5 +69,12 @@ class TextExtractor
         state.current = ['(?:', state.current, "){#{@argument}}"]
       end
     end
+
+    # skip to end of line
+    class Rest < Directive
+      def call
+        state.current = [state.current, '[^\\n]*']
+      end
+    end
   end
 end
