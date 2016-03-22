@@ -96,8 +96,8 @@ class TextExtractor
 
     def parse_one_directive(source)
       md = source.match(/^[a-z_]+/) || source.match(/^ /)
+      raise "Unknown directive(s) in #{@state.current_line}" unless md
       word = md[0]
-      raise "Unknown directive(s) #{source}" unless md
       map = DIRECTIVE_MAP.fetch(word) { raise "Unknown directive #{word}" }
       args = parse_arguments(map[:arguments], md.post_match)
       map.fetch(:class).new(@state, *args)
