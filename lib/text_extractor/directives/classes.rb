@@ -73,7 +73,11 @@ class TextExtractor
     # skip to end of line
     class Rest < Directive
       def call
-        state.current = [state.current, '[^\\n]*']
+        state.current = if state.newline?
+                          [state.current.chomp, '[^\\n]*\n']
+                        else
+                          [state.current, '[^\\n]*']
+                        end
       end
     end
   end

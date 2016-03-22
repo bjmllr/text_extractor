@@ -166,8 +166,9 @@ two #.repeat(2)
     end
 
     def test_rest
-      input = /asdf #.rest/
-      expected = /asdf[^\n]*/
+      input = /asdf #.rest
+qwer/
+      expected = /asdf[^\n]*\nqwer/
       assert_equal expected, expand(input)
     end
   end
