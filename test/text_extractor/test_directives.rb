@@ -171,5 +171,11 @@ qwer/
       expected = /asdf[^\n]*\nqwer/
       assert_equal expected, expand(input)
     end
+
+    def test_trailing_comment
+      input = /asdf #.rest. a comment/
+      expected = /asdf[^\n]*/
+      assert_equal expected, expand(input)
+    end
   end
 end

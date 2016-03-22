@@ -39,7 +39,7 @@ class TextExtractor
     private
 
     DIRECTIVE_MAP = {
-      ' '      => { class: Comment, arguments: ->(source) { [source[1..-1]] } },
+      ' '      => { class: Comment },
       'any'    => { class: Any },
       'begin'  => { class: Begin, arguments: :parsed },
       'end'    => { class: End },
@@ -95,7 +95,7 @@ class TextExtractor
     end
 
     def parse_one_directive(source)
-      md = source.match(/^[a-z_]+/)
+      md = source.match(/^[a-z_]+/) || source.match(/^ /)
       word = md[0]
       raise "Unknown directive(s) #{source}" unless md
       map = DIRECTIVE_MAP.fetch(word) { raise "Unknown directive #{word}" }
