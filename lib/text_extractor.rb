@@ -65,34 +65,10 @@ class TextExtractor
     value(id, re) { |val| IPAddr.new(val) }
   end
 
-  def strip_record(regexp, strip: nil)
-    lines = regexp.source.split("\n")
-    prefix = lines.last
-
-    if prefix =~ /\A\s*\z/
-      lines.pop if lines.first =~ /\A\s*\z/
-      lines.shift
-      strip_record_by_line(lines, prefix, strip)
-    end
-
-    Regexp.new(lines.join("\n"), regexp.options)
-  end
-
-  def strip_record_by_line(lines, prefix, strip)
-    lines.map! { |s| s.gsub(prefix.to_s, '') }
-    case strip
-    when :left  then lines.map! { |s| "\[ \t\r\f]*#{s.lstrip}" }
-    when :right then lines.map! { |s| "#{s.rstrip}\[ \t\r\f]*" }
-    when :both  then lines.map! { |s| "\[ \t\r\f]*#{s.strip}\[ \t\r\f]*" }
-    end
-  end
-
   def record(klass = Record, **kwargs, &block)
     raise "#{self.class}.record requires a block" unless block
-    @current_record_values = []
-    regexp = strip_record(instance_exec(&block), strip: kwargs.delete(:strip))
-    kwargs[:values] = @current_record_values
-    @records << klass.new(regexp, **kwargs)
+    kwargs[:values] = @current_record_values = []
+    @records << klass.new(instance_exec(&block), **kwargs)
   end
 
   def filldown(**kwargs, &block)

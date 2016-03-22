@@ -4,8 +4,9 @@ class TextExtractor
   class Record
     attr_reader :regexp, :factory, :values
 
-    def initialize(regexp, factory: nil, values: [], fill: [], directives: true)
-      @regexp = expand_regexp(regexp, directives)
+    def initialize(regexp, factory: nil, values: [], fill: [], directives: true,
+                   strip: nil)
+      @regexp = build_regexp(regexp, directives, strip)
       @factory = factory
       @constructor = FactoryAnalyzer.new(factory).to_proc
       @values = values.map { |val| [val.id, val] }.to_h
@@ -25,11 +26,53 @@ class TextExtractor
       @constructor.call(extracted)
     end
 
+    def build_regexp(regexp, directives, strip)
+      stripped = strip_regexp(regexp, strip)
+      expanded = expand_regexp(stripped, directives)
+      ignore_regexp(expanded, strip)
+    end
+
+    def strip_regexp(regexp, strip)
+      lines = regexp.source.split("\n")
+      prefix = lines.last
+      if lines.first =~ /\A\s*\z/ && prefix =~ /\A\s*\z/
+        lines.shift
+        lines = lines.map { |s| s.gsub(prefix, '') }
+        lines = lines.map(&regexp_line_stripper(strip))
+      end
+      Regexp.new(lines.join("\n"), regexp.options)
+    end
+
+    def regexp_line_stripper(strip)
+      case strip
+      when :left  then ->(s) { s.lstrip }
+      when :right then ->(s) { s.rstrip }
+      when :both  then ->(s) { s.strip }
+      when nil, false then ->(s) { s }
+      else raise "Unknown strip option: #{strip}"
+      end
+    end
+
     def expand_regexp(regexp, directives)
       if directives
         TextExtractor.expand_directives(regexp)
       else
         regexp
+      end
+    end
+
+    def ignore_regexp(regexp, strip)
+      return regexp unless strip
+      lines = regexp.source.split("\n").map(&regexp_line_ignorer(strip))
+      Regexp.new(lines.join("\n"), regexp.options)
+    end
+
+    def regexp_line_ignorer(strip)
+      case strip
+      when :left  then ->(s) { "\[ \\t\\r\\f]*#{s}" }
+      when :right then ->(s) { "#{s}\[ \\t\\r\\f]*" }
+      when :both  then ->(s) { "\[ \\t\\r\\f]*#{s}\[ \\t\\r\\f]*" }
+      else raise "Unknown ignore whitespace option: #{strip}"
       end
     end
 
