@@ -9,7 +9,11 @@ class TextExtractor
     end
 
     def convert(value)
-      @block ? @block.call(*value) : value
+      @block ? @block.call(value) : value
+    rescue => e
+      raise e.class,
+            "in custom conversion of "\
+            "value(#{id.inspect}, #{re.inspect}): #{e.message}"
     end
   end
 end
