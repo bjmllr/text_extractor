@@ -361,6 +361,16 @@ end
 
 ```
 
+To have the `filldown` results included in the main result set, call `filldown` with `output: true`, as in:
+
+```ruby
+filldown(output: true) do
+  ...
+end
+```
+
+In general, `filldown` supports the same options as `record`.
+
 ### Line directives
 
 Line directives are additional regular expression syntax available in record definitions. They are placed at the end of a line, and have effects on that entire line, including the trailing newline. A line directive is indicated by `#.` (preceeded by a space) appearing anywhere in a line of a `record`. Any preceeding spaces, the `#.`, and any following characters will be ignored. To prevent a regexp fragment `/ #./` from being interpreted as a directive in a record definition, instead write it as `/\s#./` or `/[ ]#./`.
