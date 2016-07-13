@@ -3,7 +3,7 @@
 [![Gem Version](https://badge.fury.io/rb/text_extractor.svg)](https://rubygems.org/gems/text_extractor)
 [![Build Status](https://travis-ci.org/bjmllr/text_extractor.svg)](https://travis-ci.org/bjmllr/text_extractor) 
 
-TextExtractor is a simple DSL for extracting data from text which follows a simple, consistent format, but which is not a well known format such as XML, JSON, or YAML, and for which conventional regular expression syntax might be too bulky or hard to follow.  It is inspired by the TextFSM project (https://code.google.com/p/textfsm/).
+TextExtractor is a simple DSL for extracting data from text which follows a simple, consistent format, but which is not a well known format such as XML, JSON, or YAML, and for which conventional regular expression syntax might be too bulky or hard to follow.  It is inspired by the TextFSM project (https://github.com/google/textfsm).
 
 ## Installation
 
