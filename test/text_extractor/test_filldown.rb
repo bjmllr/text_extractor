@@ -40,11 +40,31 @@ class TestTextExtractorFilldown < Minitest::Test
     { name: 'Marie Curie' }
   ].freeze
 
+  EXTRACTOR_FILL_AND_OUTPUT = TextExtractor.new do
+    value :occupation, /\w+/
+    value :name, /\w+ \w+/
+    filldown(output: true) { /#{occupation}:/ }
+    record(fill: :occupation) { /#{name}/ }
+  end
+
+  OUTPUT_FILL_AND_OUTPUT = [
+    { occupation: 'Philosophers' },
+    { occupation: 'Philosophers', name: 'Rene Descartes' },
+    { occupation: 'Philosophers', name: 'Bertrand Russell' },
+    { occupation: 'Chemists' },
+    { occupation: 'Chemists', name: 'Alfred Nobel' },
+    { occupation: 'Chemists', name: 'Marie Curie' }
+  ].freeze
+
   def test_filldown_with_fill
     assert_equal OUTPUT_FILL, EXTRACTOR_FILL.scan(INPUT)
   end
 
   def test_filldown_with_no_fill
     assert_equal OUTPUT_NO_FILL, EXTRACTOR_NO_FILL.scan(INPUT)
+  end
+
+  def test_filldown_with_fill_and_output
+    assert_equal OUTPUT_FILL_AND_OUTPUT, EXTRACTOR_FILL_AND_OUTPUT.scan(INPUT)
   end
 end
