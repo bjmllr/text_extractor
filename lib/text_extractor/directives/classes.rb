@@ -1,3 +1,5 @@
+require 'text_extractor/inline_value'
+
 class TextExtractor
   class Directives
     # base class for line directives
@@ -8,6 +10,10 @@ class TextExtractor
         @state = state
         @argument = argument
         init if respond_to?(:init)
+      end
+
+      def values
+        []
       end
     end
 
@@ -39,6 +45,17 @@ class TextExtractor
     class Any < Begin
       def group(*args)
         AnyGroup.new(*args)
+      end
+    end
+
+    # capture group that creates a value
+    class Capture < Begin
+      def group(name, *args)
+        CaptureGroup.new(name, *args)
+      end
+
+      def values
+        [InlineValue.new(@argument.to_sym)]
       end
     end
 

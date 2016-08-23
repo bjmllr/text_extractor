@@ -5,12 +5,14 @@ class TextExtractor
     attr_reader :regexp, :factory, :values
 
     def initialize(regexp, factory: nil, values: [], fill: [], directives: true,
-                   strip: nil)
-      @regexp = build_regexp(regexp, directives, strip)
+                   inline: [], extractor_values: {}, strip: nil)
       @factory = factory
       @constructor = FactoryAnalyzer.new(factory).to_proc
+      @extractor_values = extractor_values
       @values = values.map { |val| [val.id, val] }.to_h
+      initialize_inline_values(inline)
       @default_values = values.map { |val| [val.id, nil] }.to_h
+      @regexp = build_regexp(regexp, directives, strip)
       @fill = Array(fill)
     end
 
@@ -55,7 +57,12 @@ class TextExtractor
 
     def expand_regexp(regexp, directives)
       if directives
-        TextExtractor.expand_directives(regexp)
+        expander = Directives.new(regexp)
+        expanded = expander.expand
+        expander.values.each { |value|
+          values[value.id] = @extractor_values.fetch(value.id, value)
+        }
+        expanded
       else
         regexp
       end
@@ -94,6 +101,13 @@ class TextExtractor
 
     def extract_values(match)
       values.keys.map { |id| [id, values[id].convert(match[id])] }.to_h
+    end
+
+    def initialize_inline_values(inline_values)
+      inline_values.each do |value|
+        @values[value] = @extractor_values
+                         .fetch(value) { InlineValue.new(value) }
+      end
     end
 
     # converts the value of the factory option to a constructor proc

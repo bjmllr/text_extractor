@@ -42,5 +42,17 @@ class TextExtractor
         ['(?:', *@lines.flat_map { |e| [e, '|'] }[0..-2], ')']
       end
     end
+
+    # a line group that will be captured to a value
+    class CaptureGroup < Group
+      def initialize(name, *args)
+        @name = name
+        @lines = args
+      end
+
+      def join
+        ["(?<#{@name}>", *@lines, ')']
+      end
+    end
   end
 end

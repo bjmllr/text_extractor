@@ -2,6 +2,7 @@ require_relative 'text_extractor/extraction'
 require_relative 'text_extractor/filldown'
 require_relative 'text_extractor/record'
 require_relative 'text_extractor/value'
+require_relative 'text_extractor/inline_value'
 
 # represents an extractor definition
 class TextExtractor
@@ -41,6 +42,10 @@ class TextExtractor
     end
   end
 
+  def inline(id, &block)
+    @values[id] = InlineValue.new(id, &block)
+  end
+
   def boolean(id, re = Patterns::BOOLEAN)
     value(id, re) { |val| !val.match(Patterns::FALSE) }
   end
@@ -67,6 +72,7 @@ class TextExtractor
 
   def record(klass = Record, **kwargs, &block)
     raise "#{self.class}.record requires a block" unless block
+    kwargs[:extractor_values] = values
     kwargs[:values] = @current_record_values = []
     @records << klass.new(instance_exec(&block), **kwargs)
   end

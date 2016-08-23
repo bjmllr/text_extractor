@@ -197,6 +197,56 @@ Regexp is provided for each one. These defaults are highly permissive,
 so it may be desirable to provide stricter ones depending on your
 application.
 
+### Inline Values
+
+It's possible to define a `value` inside a record expression using standard ruby named capture group syntax. To do this, pass an array of symbols containing the names of the capture groups from the pattern using the `inline` keyword:
+
+```ruby
+TextExtractor.new do
+  record(inline: [:foo]) do
+    /
+    before
+    (?<foo>pattern to capture)
+    after
+    /
+  end
+end
+```
+
+Inline values can also be defined using the `#.capture` line directive (see directives, below). In this case, the `inline` keyword argument is not needed:
+
+```ruby
+TextExtractor.new do
+  record do
+    /
+    before
+    #.capture(foo)
+    pattern to capture
+    #.end
+    after
+    /
+  end
+end
+```
+
+In either case, the `inline` method can be used to give a conversion block for the value:
+
+```ruby
+TextExtractor.new do
+  inline(:foo) { |v| v.strip }
+
+  record do
+    /
+    before
+    #.capture(foo)
+    pattern to capture
+    #.end
+    after
+    /
+  end
+end
+```
+
 ### Factories
 
 By default, records are converted into hashes, but it's possible to
@@ -381,6 +431,7 @@ The following directives are available:
 
 * `#. ` - Comment. There is a space after the `.`. Any text can be placed after the space and it will be ignored. Comments can appear after other directives, using a chain like `#.rest. blah blah`.
 * `#.begin` / `#.end` - Grouping. Compiles to regex `(?:...)`. Lines between `#.begin` and `#.end` will be added to a *line group*. Line groups do nothing on their own, but they can change the meaning of other directives. Other than directives, the lines these directives appear on will be ignored. Line groups can be nested. If a word is placed after `#.begin`.
+* `#.capture(name)` / `#.end` - Grouping with capture. Implicitly defines an inline value (see "Inline Values", above) for the record.
 * `#.maybe` - Optional. Compiles to regex `?`. Make this line optional. Equivalent to `#.repeat 0,1`. A `#.maybe` directive can apply to an entire line group, using a chain like `#.end.maybe`.
 * `#.any` / `#.end` - Alternation. Compiles to regex `(?:...|...)`. Form a group, as with `#.begin` / `#.end`, matching any one of the lines (or nested groups) in the group, but not more than one. The lines that these directives appear on will be ignored.
 * `#.repeat(n,m)` - Repetition. Compiles to regex `{n,m}`. Allow the line to appear the specified number of times. Note that the pattern is repeated, but the matching text might not be exactly the same each time. If only `n` (with no comma) is given, the line must appear exactly n times. If `n,` (with a comma) is given, the line must appear at least n times, but there is no upper limit. `#.repeat(1,)` is therefore equivalent to regex `+`. If both `n` and `m` are omitted, the line may appear 0 or more times (equivalent to regex `*`). A `#.repeat` directive can apply to an entire line group, using a chain like `#.end.repeat`.

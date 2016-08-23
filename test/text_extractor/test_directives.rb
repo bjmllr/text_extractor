@@ -37,6 +37,16 @@ bloo)/
       assert_equal expected, expand(input)
     end
 
+    def test_capture_line_group
+      input = /#.capture(foo)
+blah
+bloo
+      #.end/
+      expected = /(?<foo>blah
+bloo)/
+      assert_equal expected, expand(input)
+    end
+
     def test_consecutive_line_group
       input = /#.begin
 blah

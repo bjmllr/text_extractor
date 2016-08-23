@@ -26,6 +26,7 @@ class TextExtractor
       @source = original.source
       @options = original.options
       @output = nil
+      @directives = []
     end
 
     def expand
@@ -37,12 +38,17 @@ class TextExtractor
       @output = Regexp.new(@state.target.join(''), @options)
     end
 
+    def values
+      @directives.flat_map(&:values)
+    end
+
     private
 
     DIRECTIVE_MAP = {
       ' '      => { class: Comment },
       'any'    => { class: Any },
       'begin'  => { class: Begin, arguments: :parsed },
+      'capture' => { class: Capture, arguments: :parsed },
       'end'    => { class: End },
       'maybe'  => { class: Maybe },
       'repeat' => { class: Repeat, arguments: :parse },
@@ -93,6 +99,7 @@ class TextExtractor
       return [Comment.new(@state)] if full_source.start_with?(' ')
       split_directives(full_source)
         .map { |source| parse_one_directive(source) }
+        .each { |directive| @directives << directive }
     end
 
     def parse_one_directive(source)
