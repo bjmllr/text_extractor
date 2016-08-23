@@ -25,6 +25,7 @@ class TextExtractor
     def initialize(original)
       @source = original.source
       @options = original.options
+      @output = nil
     end
 
     def expand

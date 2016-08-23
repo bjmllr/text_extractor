@@ -5,7 +5,7 @@ class TextExtractor
     def initialize(id, re, &block)
       @id = id
       @re = re
-      @block = block if block_given?
+      @block = block
     end
 
     def convert(value)

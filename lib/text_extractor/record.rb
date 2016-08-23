@@ -99,6 +99,8 @@ class TextExtractor
     # converts the value of the factory option to a constructor proc
     class FactoryAnalyzer
       def initialize(factory)
+        @params = nil
+
         case factory
         when Hash
           @klass, @params = factory.first
