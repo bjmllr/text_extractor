@@ -421,6 +421,22 @@ end
 
 In general, `filldown` supports the same options as `record`.
 
+### Sections
+
+In some cases, backtracking regular expression engines such as the one used in Ruby might have poor performance on large inputs. In some of these cases, it might be possible to mitigate the problem by dividing the input text into a number of smaller texts. If you find that the performance of a `TextExtractor` scales poorly, you might wish to try dividing the input into sections and scanning each section independently of the others. The `section` method does this using a simple section-dividing strategy based on Ruby's `String#split`.
+
+```ruby
+  TextExtractor.new do
+    # values omitted
+
+    section(/\n\n+/, "\n")
+
+    # records omitted
+  end
+```
+
+The first argument is the delimiter, a pattern given to `String#split`. The optional second argument is the terminator, a string that will be appended to each element of the array returned by `String#split`. The input will be separated into sections of the text to be scanned independently, and the output of each scan will be combined to form the final output.
+
 ### Line directives
 
 Line directives are additional regular expression syntax available in record definitions. They are placed at the end of a line, and have effects on that entire line, including the trailing newline. A line directive is indicated by `#.` (preceeded by a space) appearing anywhere in a line of a `record`. Any preceeding spaces, the `#.`, and any following characters will be ignored. To prevent a regexp fragment `/ #./` from being interpreted as a directive in a record definition, instead write it as `/\s#./` or `/[ ]#./`.

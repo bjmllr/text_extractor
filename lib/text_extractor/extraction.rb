@@ -3,16 +3,16 @@ class TextExtractor
   class Extraction
     attr_reader :input, :extractor, :re, :pos, :matches, :values
 
-    def initialize(input, extractor)
+    def initialize(input, extractor, fill = {})
       @input = input
       @extractor = extractor
+      @fill = fill
       @pos = 0
       @matches = []
       @last_match = nil
     end
 
     def extraction_matches
-      @fill = {}
       matches.flat_map do |match|
         extraction_match(match)
       end

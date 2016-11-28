@@ -16,6 +16,8 @@ class TextExtractor
     @records = []
     @filldowns = []
     @current_record_values = []
+    @section_delimiter = nil
+    @section_terminator = nil
     instance_exec(&block)
   end
 
@@ -77,6 +79,11 @@ class TextExtractor
     @records << klass.new(instance_exec(&block), **kwargs)
   end
 
+  def section(delimiter, terminator = nil)
+    @section_delimiter = delimiter
+    @section_terminator = terminator
+  end
+
   def filldown(**kwargs, &block)
     raise "#{self.class}.filldown requires a block" unless block
     record(Filldown, **kwargs, &block)
@@ -87,7 +94,19 @@ class TextExtractor
   end
 
   def scan(input)
-    Extraction.new(input, self).scan.extraction_matches
+    prefill = {}
+    sections(input).flat_map { |section|
+      Extraction.new(section, self, prefill).scan.extraction_matches
+    }
+  end
+
+  def sections(input)
+    return [input] unless @section_delimiter
+
+    texts = input.split(@section_delimiter)
+    return texts unless @section_terminator
+
+    texts.map { |section| section + @section_terminator }
   end
 
   def regexps
