@@ -16,9 +16,9 @@ class TestTextExtractorSections < Minitest::Test
     section(/\n\n+/, "\n")
   end
 
-  # def test_sections
-  #   assert_equal OUTPUT, EXTRACTOR.sections(INPUT)
-  # end
+  def test_sections
+    assert_equal OUTPUT, EXTRACTOR.sections(INPUT)
+  end
 
   FILL_INPUT = unindent(<<-END).freeze
   :title
