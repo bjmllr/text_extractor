@@ -10,7 +10,7 @@ class TestTextExtractorSections < Minitest::Test
   Four
   END
 
-  OUTPUT = ["One\nTwo\n", "Three\nFour\n"].freeze
+  OUTPUT = ["One\nTwo\n", "Three\nFour\n\n"].freeze
 
   EXTRACTOR = TextExtractor.new do
     section(/\n\n+/, "\n")
