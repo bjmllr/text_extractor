@@ -1,0 +1,18 @@
+Naming/UncommunicativeMethodParamName:
+  AllowedNames:
+    - id
+    - re
+
+Style/BlockDelimiters:
+  EnforcedStyle: semantic
+  IgnoredMethods:
+    - each
+    - filldown
+    - value
+    - record
+
+Style/CommentedKeyword:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false

@@ -61,8 +61,7 @@ class TextExtractor
 
     # text that will be omitted from the regexp
     class Comment < Directive
-      def call
-      end
+      def call; end
     end
 
     # close a line group

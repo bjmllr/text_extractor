@@ -1,4 +1,4 @@
-require File.expand_path('../lib/text_extractor/version', __FILE__)
+require File.expand_path('lib/text_extractor/version', __dir__)
 
 Gem::Specification.new do |spec|
   spec.name = 'text_extractor'
@@ -14,6 +14,7 @@ Gem::Specification.new do |spec|
   spec.require_path = 'lib'
 
   spec.add_development_dependency 'bundler', '~> 1.0'
-  spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'minitest', '~> 5.0'
+  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'rubocop', '~> 0.54'
 end

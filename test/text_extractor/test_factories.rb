@@ -38,7 +38,7 @@ class TestTextExtractorFactories < Minitest::Test
     value :place, /\w+/
     record(factory: WhoWhere) { /whowhere #{person} #{place}/ }
     record(factory: Where) { /where #{place}/ }
-    record(factory: { WhoWhere => [:person, :place] }) do
+    record(factory: { WhoWhere => %i[person place] }) do
       /wherewho #{place} #{person}/
     end
   end

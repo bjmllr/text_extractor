@@ -10,9 +10,9 @@ class TextExtractor
 
     def convert(value)
       @block ? @block.call(value) : value
-    rescue => e
+    rescue StandardError => e
       raise e.class,
-            "in custom conversion of "\
+            'in custom conversion of '\
             "value(#{id.inspect}, #{re.inspect}): #{e.message}"
     end
   end

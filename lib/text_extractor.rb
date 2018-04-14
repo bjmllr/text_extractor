@@ -28,8 +28,8 @@ class TextExtractor
     IPV4 = /[0-9.]{7,15}/
     IPV6 = /[:a-fA-F0-9\.]{2,45}/
     IPADDR = Regexp.union(IPV4, IPV6)
-    IPV4_NET = /#{IPV4}\/\d{1,2}/
-    IPV6_NET = /#{IPV6}\/\d{1,3}/
+    IPV4_NET = %r{#{IPV4}/\d{1,2}}
+    IPV6_NET = %r{#{IPV6}\/\d{1,3}}
     IPNETADDR = Regexp.union(IPV4_NET, IPV6_NET)
     TRUE = /y|yes|t|true|on/i
     FALSE = /n|no|f|false|off/i

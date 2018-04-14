@@ -1,0 +1,11 @@
+Naming/UncommunicativeMethodParamName:
+  AllowedNames:
+    - id
+    - re
+
+Metrics/ClassLength:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+Naming/HeredocDelimiterNaming:
+  Enabled: false

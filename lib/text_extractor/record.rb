@@ -4,8 +4,17 @@ class TextExtractor
   class Record
     attr_reader :regexp, :factory, :values
 
-    def initialize(regexp, factory: nil, values: [], fill: [], directives: true,
-                   inline: [], extractor_values: {}, strip: nil)
+    # rubocop: disable Metrics/ParameterLists
+    def initialize(
+          regexp,
+          factory: nil,
+          values: [],
+          fill: [],
+          directives: true,
+          inline: [],
+          extractor_values: {},
+          strip: nil
+    )
       @factory = factory
       @constructor = FactoryAnalyzer.new(factory).to_proc
       @extractor_values = extractor_values
@@ -15,11 +24,12 @@ class TextExtractor
       @regexp = build_regexp(regexp, directives, strip)
       @fill = Array(fill)
     end
+    # rubocop: enable Metrics/ParameterLists
 
     def extraction(match, fill)
       extracted = {}.merge!(@default_values)
-                    .merge!(extract_fills fill)
-                    .merge!(extract_values match)
+                    .merge!(extract_fills(fill))
+                    .merge!(extract_values(match))
       build_extraction(extracted)
     end
 
@@ -59,9 +69,9 @@ class TextExtractor
       if directives
         expander = Directives.new(regexp)
         expanded = expander.expand
-        expander.values.each { |value|
+        expander.values.each do |value|
           values[value.id] = @extractor_values.fetch(value.id, value)
-        }
+        end
         expanded
       else
         regexp
