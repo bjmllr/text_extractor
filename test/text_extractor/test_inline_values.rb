@@ -16,13 +16,13 @@ class TextExtractor
         end
       end
 
-      input = <<-END.gsub(/^\s*|/, '')
-        |before
-        |  blah1
-        |after
-        |before
-        |  blah2
-        |after
+      input = <<-END.gsub(/^\s*!/, '')
+        !before
+        !  blah1
+        !after
+        !before
+        !  blah2
+        !after
       END
 
       expected = [
@@ -48,13 +48,13 @@ class TextExtractor
         end
       end
 
-      input = <<-END.gsub(/^\s*|/, '')
-        |before
-        |  blah1
-        |after
-        |before
-        |  blah2
-        |after
+      input = <<-END.gsub(/^\s*!/, '')
+        !before
+        !  blah1
+        !after
+        !before
+        !  blah2
+        !after
       END
 
       expected = [
@@ -76,9 +76,9 @@ class TextExtractor
         end
       end
 
-      input = <<-END.gsub(/^\s*|/, '')
-        |before3after
-        |before2after
+      input = <<-END.gsub(/^\s*!/, '')
+        !before3after
+        !before2after
       END
 
       expected = [
