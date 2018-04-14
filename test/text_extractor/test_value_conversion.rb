@@ -42,7 +42,7 @@ class TestTextExtractorValueConverstion < Minitest::Test
        Custom: #{reversed}
       /
     end
-  end # EXTRACTOR = TextExtractor.new do
+  end
 
   OUTPUT = [
     {

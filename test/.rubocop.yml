@@ -3,6 +3,10 @@ Naming/UncommunicativeMethodParamName:
     - id
     - re
 
+Metrics/BlockLength:
+  ExcludedMethods:
+    - new
+
 Metrics/ClassLength:
   Enabled: false
 Metrics/MethodLength:
