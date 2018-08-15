@@ -26,11 +26,12 @@ class TextExtractor
     end
     # rubocop: enable Metrics/ParameterLists
 
+    # @return Array
     def extraction(match, fill)
       extracted = {}.merge!(@default_values)
                     .merge!(extract_fills(fill))
                     .merge!(extract_values(match))
-      build_extraction(extracted)
+      [build_extraction(extracted)]
     end
 
     def build_extraction(extracted)
