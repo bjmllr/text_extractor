@@ -15,6 +15,7 @@ class TextExtractor
 
     INDENTED = {
       description: 'indented line',
+      factory: ->(e) { e },
       block: proc {
         /
         ^[^\n\S]+[^\n]*$
@@ -24,6 +25,7 @@ class TextExtractor
 
     UNINDENTED = {
       description: 'unindented line',
+      factory: ->(e) { e },
       block: proc {
         /
         ^\S+[^\n]*$
