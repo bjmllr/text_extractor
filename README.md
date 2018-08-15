@@ -421,6 +421,53 @@ end
 
 In general, `filldown` supports the same options as `record`.
 
+### Skip records
+
+In some cases, it may be easier to separate important text from unimportant text by excluding the unimportant than by including the important. The special `skip` record type is used to define records to be skipped.
+
+Consider a stream of movie information:
+
+```
+Matrix, The
+  Genre: Science Fiction
+Magnificent Seven, The
+  Genre: Western
+Get Out
+  Genre: Horror
+```
+
+If we use an extractor with a `skip` record to omit a particular movie genre, like this:
+
+```ruby
+NO_WESTERNS = TextExtractor.new do
+  value :title, /[^\n]+/
+  value :genre, /[^\n]+/
+
+  skip do
+    /
+    #{title}
+      Genre: Western
+    /
+  end
+
+  record do
+    /
+    #{title}
+      Genre: #{genre}
+    /
+  end
+end
+```
+
+Then the output will look like this:
+
+```ruby
+[
+  { title: 'Matrix, The', genre: 'Science Fiction' },
+  { title: 'Get Out', genre: 'Horror' }
+]
+```
+
 ### Sections
 
 In some cases, backtracking regular expression engines such as the one used in Ruby might have poor performance on large inputs. In some of these cases, it might be possible to mitigate the problem by dividing the input text into a number of smaller texts. If you find that the performance of a `TextExtractor` scales poorly, you might wish to try dividing the input into sections and scanning each section independently of the others. The `section` method does this using a simple section-dividing strategy based on Ruby's `String#split`.

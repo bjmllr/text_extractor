@@ -1,6 +1,7 @@
 require_relative 'text_extractor/extraction'
 require_relative 'text_extractor/filldown'
 require_relative 'text_extractor/record'
+require_relative 'text_extractor/skip'
 require_relative 'text_extractor/value'
 require_relative 'text_extractor/inline_value'
 
@@ -107,6 +108,11 @@ class TextExtractor
     return texts unless @section_terminator
 
     texts.map { |section| section + @section_terminator }
+  end
+
+  def skip(**kwargs, &block)
+    raise "#{self.class}.skip requires a block" unless block
+    record(Skip, **kwargs, &block)
   end
 
   def regexps
