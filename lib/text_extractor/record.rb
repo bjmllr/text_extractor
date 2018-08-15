@@ -137,7 +137,7 @@ class TextExtractor
       def to_proc
         if @params
           explicit
-        elsif @klass.is_a?(Proc)
+        elsif @klass.respond_to?(:call)
           @klass
         elsif @klass
           implicit
