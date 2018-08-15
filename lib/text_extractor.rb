@@ -114,7 +114,7 @@ class TextExtractor
   end
 
   def guards(*guard_args)
-    guard_args = Guards::DEFAULT if guard_args.empty?
+    guard_args = Guard::DEFAULT if guard_args.empty?
     @append_guards = guard_args
   end
 
