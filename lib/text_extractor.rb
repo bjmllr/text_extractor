@@ -75,6 +75,7 @@ class TextExtractor
   def record(klass = Record, **kwargs, &block)
     raise "#{self.class}.record requires a block" unless block
     kwargs[:extractor_values] = values
+    kwargs[:factory] ||= @factory if @factory
     kwargs[:values] = @current_record_values = []
     @records << klass.new(instance_exec(&block), **kwargs)
   end
@@ -82,6 +83,14 @@ class TextExtractor
   def section(delimiter, terminator = nil)
     @section_delimiter = delimiter
     @section_terminator = terminator
+  end
+
+  def factory(object = nil)
+    if object
+      @factory = object
+    else
+      @factory
+    end
   end
 
   def filldown(**kwargs, &block)

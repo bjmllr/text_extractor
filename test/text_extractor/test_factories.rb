@@ -13,9 +13,10 @@ class TestTextExtractorFactories < Minitest::Test
   Where = Struct.new(:place)
 
   EXTRACTOR = TextExtractor.new do
+    factory WhoWhere
     value :person, /\w+ \w+/
     value :place, /\w+/
-    record(factory: WhoWhere) { /whowhere #{person} #{place}/ }
+    record { /whowhere #{person} #{place}/ }
     record(factory: Where) { /where #{place}/ }
   end
 

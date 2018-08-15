@@ -318,6 +318,14 @@ Giving an explicit order in this way will cause positional arguments to be used 
 
 It's also possible to give a `Proc` as the factory. In this case, the proc will be called with the hash of extracted values as an argument.
 
+If you wish to provide a default factory for every record in an extractor, you can use `TextExtractor.factory`:
+
+```ruby
+CAPITALIZING_EXTRACTOR = TextExtractor.new do
+  factory(->(r) { r.transform_values(&:upcase) })
+end
+```
+
 ### Strip whitespace between lines
 
 Some texts may use whitespace inconsistently. To ignore whitespace at the start and/or end of each line, pass the `strip` option. The three possible values are `:left` (ignore whitespace at the starts of lines), `:right` (ignore whitespace at the ends of lines), and `:both`.
