@@ -250,7 +250,7 @@ end
 ### Factories
 
 By default, records are converted into hashes, but it's possible to
-specify a Struct or other factory object to use in place of a hash.
+specify a callable, Struct or other class to use in place of a hash.
 
 ```ruby
 extractor = TextExtractor.new do
@@ -316,7 +316,7 @@ WhoWhere.new(match[:person], match[:place])
 
 Giving an explicit order in this way will cause positional arguments to be used even if the factory is not a `Struct` subclass. If you wish to use keyword arguments instead of positional arguments, pass the list of value names as a `Set` instead of an `Array`.
 
-It's also possible to give a `Proc` as the factory. In this case, the proc will be called with the hash of extracted values as an argument.
+It's also possible to give a callable such as a `Proc`, `Method`, or any other object that responds to `#call` as the factory. In this case, the callable will be called with the hash of extracted values as the only argument.
 
 ### Strip whitespace between lines
 
