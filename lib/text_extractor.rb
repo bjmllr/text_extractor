@@ -1,5 +1,6 @@
 require_relative 'text_extractor/extraction'
 require_relative 'text_extractor/filldown'
+require_relative 'text_extractor/guard'
 require_relative 'text_extractor/record'
 require_relative 'text_extractor/value'
 require_relative 'text_extractor/inline_value'
@@ -8,6 +9,7 @@ require_relative 'text_extractor/inline_value'
 class TextExtractor
   attr_reader :records, :values
 
+  # rubocop: disable Metrics/MethodLength
   def initialize(&block)
     raise "#{self.class}.new requires a block" unless block
     @values = {}
@@ -18,8 +20,11 @@ class TextExtractor
     @current_record_values = []
     @section_delimiter = nil
     @section_terminator = nil
+    @append_guards = []
     instance_exec(&block)
+    @append_guards.each { |g| guard(**g, &g[:block]) }
   end
+  # rubocop: enable Metrics/MethodLength
 
   module Patterns
     INTEGER = /\d+/
@@ -100,6 +105,16 @@ class TextExtractor
 
   def find_record_for(match)
     records[records.length.times.find_index { |i| match["__#{i}"] }]
+  end
+
+  def guard(**kwargs, &block)
+    raise "#{self.class}.guard requires a block" unless block
+    record(Guard, **kwargs, &block)
+  end
+
+  def guards(*guard_args)
+    guard_args = Guards::DEFAULT if guard_args.empty?
+    @append_guards = guard_args
   end
 
   def scan(input)

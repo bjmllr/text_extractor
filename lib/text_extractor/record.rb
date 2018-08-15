@@ -13,7 +13,8 @@ class TextExtractor
           directives: true,
           inline: [],
           extractor_values: {},
-          strip: nil
+          strip: nil,
+          **_kwargs
     )
       @factory = factory
       @constructor = FactoryAnalyzer.new(factory).to_proc

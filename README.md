@@ -367,6 +367,69 @@ produces this result:
 ]
 ```
 
+### Guarding against extraction loss
+
+Over time, the texts an extractor processes may change without being accounted for, causing records to be lost silently. To prevent this, `TextExtractor` provides a `guard` special record type. Guards raise an exception when encountering unexpected text.
+
+Consider a stream of place names:
+
+```
+Syracuse
+Memphis
+Waterloo
+```
+
+An extraterrestrial lacking experience with place names on Earth might produce an initial pass at an extractor for that stream that looks like this:
+
+```ruby
+TextExtractor.new do
+  value :name, /\S+/
+  record do
+    /
+    #{name}
+    /
+  end
+end
+```
+
+While the E.T. is away from the keyboard learning more about human culture, a name with a space in the middle such as `La Paz` might appear in the stream, but this extractor would silently ignore it. To prevent such a mistake, the extractor could have been written like this instead:
+
+```ruby
+TextExtractor.new do
+  value :name, /\S+/
+  record do
+    /
+    #{name}
+    /
+  end
+
+  guard(description: 'anything else') do
+    /
+    [^\n]+
+    /
+  end
+end
+```
+
+This extractor, given this text:
+
+```
+Syracuse
+Memphis
+Waterloo
+La Paz
+```
+
+Will raise a `TextExtractor::GuardError` with the message `anything else near "La Paz\n"`. This message can be customized by using the `description` and `factory` keywords. Note that in a guard, the argument to `factory` will be the matched substring rather than a hash of extracted values.
+
+`TextExtractor` comes with two built-in guards, one for lines of indented visible text and one for lines of visible text without indentation. `TextExtractor.guards` called with no arguments will place both of them at the end of the record list (after any subsequently defined records):
+
+```ruby
+TextExtractor.new do
+  guards
+end
+```
+
 ### Filldown
 
 Some texts may contain groups of records among which some common
