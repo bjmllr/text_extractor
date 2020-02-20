@@ -20,14 +20,20 @@ class TestTextExtractorStrip < Minitest::Test
   ].freeze
 
   EXTRACTOR = TextExtractor.new do
+    strip :left
+
     value :this, /\w+/
     value :that, /\w+/
 
-    record(strip: :left) do
+    record do
       /
       This: #{this}
       That: #{that}
       /
     end
+  end
+
+  def test_strip_left
+    assert_equal OUTPUT, EXTRACTOR.scan(INPUT)
   end
 end

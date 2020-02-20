@@ -333,10 +333,12 @@ Some texts may use whitespace inconsistently. To ignore whitespace at the start 
 For example, this extractor:
 
 ```ruby
+strip :left
+
 value :this, /\w+/
 value :that, /\w+/
 
-record(strip: :left) do
+record do
   /
   This: #{this}
   That: #{that}

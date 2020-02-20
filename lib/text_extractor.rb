@@ -13,21 +13,26 @@ class TextExtractor
   def initialize(&block)
     raise "#{self.class}.new requires a block" unless block
 
-    initialize_instance_variables
+    initialize_options
+    initialize_collections
     instance_exec(&block)
     @append_guards.each { |g| guard(**g, &g[:block]) }
   end
 
-  def initialize_instance_variables
-    @values = {}
+  def initialize_options
     @factory = nil
+    @section_delimiter = nil
+    @section_terminator = nil
+    @strip = nil
+  end
+
+  def initialize_collections
+    @values = {}
     @fill = {}
     @values = {}
     @records = []
     @filldowns = []
     @current_record_values = []
-    @section_delimiter = nil
-    @section_terminator = nil
     @append_guards = []
   end
 
@@ -96,6 +101,17 @@ class TextExtractor
     @section_terminator = terminator
   end
 
+  STRIP_PROCS = {
+    left: ->(s) { s.split("\n").map(&:lstrip).join("\n") + "\n" },
+    right: ->(s) { s.split("\n").map(&:rstrip).join("\n") + "\n" },
+    both: ->(s) { s.split("\n").map(&:strip).join("\n") + "\n" }
+  }.freeze
+
+  def strip(side = nil)
+    @strip = STRIP_PROCS[side] ||
+             (raise ArgumentError, 'Unknown strip option')
+  end
+
   def factory(object = nil)
     if object
       @factory = object
@@ -126,6 +142,7 @@ class TextExtractor
   end
 
   def scan(input)
+    input = @strip.call(input) if @strip
     prefill = {}
     sections(input).flat_map { |section|
       Extraction.new(section, self, prefill).scan.extraction_matches

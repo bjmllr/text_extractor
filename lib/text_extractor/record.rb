@@ -12,7 +12,6 @@ class TextExtractor
       directives: true,
       inline: [],
       extractor_values: {},
-      strip: nil,
       **_kwargs
     )
       @factory = factory
@@ -21,7 +20,7 @@ class TextExtractor
       @values = values.map { |val| [val.id, val] }.to_h
       initialize_inline_values(inline)
       @default_values = values.map { |val| [val.id, nil] }.to_h
-      @regexp = build_regexp(regexp, directives, strip)
+      @regexp = build_regexp(regexp, directives)
       @fill = Array(fill)
     end
 
@@ -39,35 +38,23 @@ class TextExtractor
       @constructor.call(extracted)
     end
 
-    def build_regexp(regexp, directives, strip)
-      stripped = strip_regexp(regexp, strip)
-      expanded = expand_regexp(stripped, directives)
-      final = ignore_regexp(expanded, strip)
+    def build_regexp(regexp, directives)
+      stripped = strip_regexp(regexp)
+      final = expand_regexp(stripped, directives)
 
       raise EmptyRecordError, 'Empty record detected' if final =~ ''
 
       final
     end
 
-    def strip_regexp(regexp, strip)
+    def strip_regexp(regexp)
       lines = regexp.source.split("\n")
       prefix = lines.last
       if lines.first =~ /\A\s*\z/ && prefix =~ /\A\s*\z/
         lines.shift
         lines = lines.map { |s| s.gsub(prefix, '') }
-        lines = lines.map(&regexp_line_stripper(strip))
       end
       Regexp.new(lines.join("\n"), regexp.options)
-    end
-
-    def regexp_line_stripper(strip)
-      case strip
-      when :left  then ->(s) { s.lstrip }
-      when :right then ->(s) { s.rstrip }
-      when :both  then ->(s) { s.strip }
-      when nil, false then ->(s) { s }
-      else raise "Unknown strip option: #{strip}"
-      end
     end
 
     def expand_regexp(regexp, directives)
@@ -80,22 +67,6 @@ class TextExtractor
         expanded
       else
         regexp
-      end
-    end
-
-    def ignore_regexp(regexp, strip)
-      return regexp unless strip
-
-      lines = regexp.source.split("\n").map(&regexp_line_ignorer(strip))
-      Regexp.new(lines.join("\n"), regexp.options)
-    end
-
-    def regexp_line_ignorer(strip)
-      case strip
-      when :left  then ->(s) { "\[ \\t\\r\\f]*#{s}" }
-      when :right then ->(s) { "#{s}\[ \\t\\r\\f]*" }
-      when :both  then ->(s) { "\[ \\t\\r\\f]*#{s}\[ \\t\\r\\f]*" }
-      else raise "Unknown ignore whitespace option: #{strip}"
       end
     end
 
