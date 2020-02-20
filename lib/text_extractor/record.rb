@@ -42,7 +42,11 @@ class TextExtractor
     def build_regexp(regexp, directives, strip)
       stripped = strip_regexp(regexp, strip)
       expanded = expand_regexp(stripped, directives)
-      ignore_regexp(expanded, strip)
+      final = ignore_regexp(expanded, strip)
+
+      raise EmptyRecordError, 'Empty record detected' if final =~ ''
+
+      final
     end
 
     def strip_regexp(regexp, strip)
@@ -178,4 +182,6 @@ class TextExtractor
       end
     end # class FactoryAnalyzer
   end # class Record
+
+  class EmptyRecordError < StandardError; end
 end # class TextExtractor
