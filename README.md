@@ -369,6 +369,50 @@ produces this result:
 ]
 ```
 
+### The final newline
+
+The record definitions in this document are all implicitly newline-terminated. This means that input documents must also have a newline after the last record, or else that last record will be unable to match. You can work around this problem by appending a newline to every input record, or you can define your extractor to do this for you with the `append_newline` method.
+
+Consider a simple input document:
+
+```
+Char: a
+Char: b
+```
+
+With the corresponding desired output:
+
+```ruby
+[
+  { char: 'a' },
+  { char: 'b' }
+]
+```
+
+This can be achieved with the following `TextExtractor`:
+
+```ruby
+TextExtractor.new do
+  append_newline true
+  
+  value :char, /./
+  
+  record do
+    /
+    Char: #{char}
+    /
+  end
+end
+```
+
+This will work regardless of whether or not the input document contains a trailing newline. However, if `append_newline` is removed from the extractor definition, the trailing newline will be required.
+
+By default, `append_newline` is not enabled, but this can also be changed on a system-wide basis:
+
+```ruby
+TextExtractor.append_newline = true
+```
+
 ### Guarding against extraction loss
 
 Over time, the texts an extractor processes may change without being accounted for, causing records to be lost silently. To prevent this, `TextExtractor` provides a `guard` special record type. Guards raise an exception when encountering unexpected text.
