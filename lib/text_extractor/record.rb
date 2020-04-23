@@ -4,17 +4,16 @@ class TextExtractor
   class Record
     attr_reader :regexp, :factory, :values
 
-    # rubocop: disable Metrics/ParameterLists
     def initialize(
-          regexp,
-          factory: nil,
-          values: [],
-          fill: [],
-          directives: true,
-          inline: [],
-          extractor_values: {},
-          strip: nil,
-          **_kwargs
+      regexp,
+      factory: nil,
+      values: [],
+      fill: [],
+      directives: true,
+      inline: [],
+      extractor_values: {},
+      strip: nil,
+      **_kwargs
     )
       @factory = factory
       @constructor = FactoryAnalyzer.new(factory).to_proc
@@ -25,7 +24,6 @@ class TextExtractor
       @regexp = build_regexp(regexp, directives, strip)
       @fill = Array(fill)
     end
-    # rubocop: enable Metrics/ParameterLists
 
     # @return Array
     def extraction(match, fill)
@@ -37,6 +35,7 @@ class TextExtractor
 
     def build_extraction(extracted)
       return extracted unless @constructor
+
       @constructor.call(extracted)
     end
 
@@ -82,6 +81,7 @@ class TextExtractor
 
     def ignore_regexp(regexp, strip)
       return regexp unless strip
+
       lines = regexp.source.split("\n").map(&regexp_line_ignorer(strip))
       Regexp.new(lines.join("\n"), regexp.options)
     end
