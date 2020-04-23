@@ -3,8 +3,8 @@ Metrics/BlockLength:
     - test/**/*
 
 Metrics/ClassLength:
-  Max: 120
   Exclude:
+    - lib/text_extractor.rb
     - test/**/*
 
 Metrics/MethodLength:

@@ -8,6 +8,12 @@ require_relative 'text_extractor/inline_value'
 
 # represents an extractor definition
 class TextExtractor
+  @append_newline = false
+
+  singleton_class.instance_eval do
+    attr_accessor :append_newline
+  end
+
   attr_reader :records, :values
 
   def initialize(&block)
@@ -24,6 +30,7 @@ class TextExtractor
     @section_delimiter = nil
     @section_terminator = nil
     @strip = nil
+    @append_newline = nil
   end
 
   def initialize_collections
@@ -87,6 +94,13 @@ class TextExtractor
     value(id, re) { |val| IPAddr.new(val) }
   end
 
+  def append_newline(activate = nil)
+    return TextExtractor.append_newline if activate.nil? && @append_newline.nil?
+    return @append_newline if activate.nil?
+
+    @append_newline = activate
+  end
+
   def record(klass = Record, **kwargs, &block)
     raise "#{self.class}.record requires a block" unless block
 
@@ -143,6 +157,7 @@ class TextExtractor
 
   def scan(input)
     input = @strip.call(input) if @strip
+    input += "\n" if append_newline && !input.end_with?("\n")
     prefill = {}
     sections(input).flat_map { |section|
       Extraction.new(section, self, prefill).scan.extraction_matches
