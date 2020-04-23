@@ -17,6 +17,7 @@ class TextExtractor
 
       def chomp(newline)
         return if @lines.empty? || newline
+
         tail = @lines[-1]
         if tail.is_a?(Array)
           tail = tail[-1] while tail[-1].is_a?(Array)

@@ -10,10 +10,17 @@ require_relative 'text_extractor/inline_value'
 class TextExtractor
   attr_reader :records, :values
 
-  # rubocop: disable Metrics/MethodLength
   def initialize(&block)
     raise "#{self.class}.new requires a block" unless block
+
+    initialize_instance_variables
+    instance_exec(&block)
+    @append_guards.each { |g| guard(**g, &g[:block]) }
+  end
+
+  def initialize_instance_variables
     @values = {}
+    @factory = nil
     @fill = {}
     @values = {}
     @records = []
@@ -22,23 +29,20 @@ class TextExtractor
     @section_delimiter = nil
     @section_terminator = nil
     @append_guards = []
-    instance_exec(&block)
-    @append_guards.each { |g| guard(**g, &g[:block]) }
   end
-  # rubocop: enable Metrics/MethodLength
 
   module Patterns
-    INTEGER = /\d+/
-    FLOAT = /\d+\.?|\d*\.\d+/
-    RATIONAL = %r{\d+/\d+}
-    IPV4 = /[0-9.]{7,15}/
-    IPV6 = /[:a-fA-F0-9\.]{2,45}/
+    INTEGER = /\d+/.freeze
+    FLOAT = /\d+\.?|\d*\.\d+/.freeze
+    RATIONAL = %r{\d+/\d+}.freeze
+    IPV4 = /[0-9.]{7,15}/.freeze
+    IPV6 = /[:a-fA-F0-9\.]{2,45}/.freeze
     IPADDR = Regexp.union(IPV4, IPV6)
-    IPV4_NET = %r{#{IPV4}/\d{1,2}}
-    IPV6_NET = %r{#{IPV6}\/\d{1,3}}
+    IPV4_NET = %r{#{IPV4}/\d{1,2}}.freeze
+    IPV6_NET = %r{#{IPV6}\/\d{1,3}}.freeze
     IPNETADDR = Regexp.union(IPV4_NET, IPV6_NET)
-    TRUE = /y|yes|t|true|on/i
-    FALSE = /n|no|f|false|off/i
+    TRUE = /y|yes|t|true|on/i.freeze
+    FALSE = /n|no|f|false|off/i.freeze
     BOOLEAN = Regexp.union(TRUE, FALSE)
   end
 
@@ -80,6 +84,7 @@ class TextExtractor
 
   def record(klass = Record, **kwargs, &block)
     raise "#{self.class}.record requires a block" unless block
+
     kwargs[:extractor_values] = values
     kwargs[:factory] ||= @factory if @factory
     kwargs[:values] = @current_record_values = []
@@ -101,6 +106,7 @@ class TextExtractor
 
   def filldown(**kwargs, &block)
     raise "#{self.class}.filldown requires a block" unless block
+
     record(Filldown, **kwargs, &block)
   end
 
@@ -110,6 +116,7 @@ class TextExtractor
 
   def guard(**kwargs, &block)
     raise "#{self.class}.guard requires a block" unless block
+
     record(Guard, **kwargs, &block)
   end
 
@@ -136,6 +143,7 @@ class TextExtractor
 
   def skip(**kwargs, &block)
     raise "#{self.class}.skip requires a block" unless block
+
     record(Skip, **kwargs, &block)
   end
 

@@ -31,10 +31,12 @@ class TextExtractor
 
     def expand
       return @output if @output
+
       @state = State.new
       scanner = StringScanner.new(@source)
       read_line(scanner) until scanner.eos?
       raise 'Unterminated line group' unless @state.groups.empty?
+
       @output = Regexp.new(@state.target.join(''), @options)
     end
 
@@ -45,14 +47,14 @@ class TextExtractor
     private
 
     DIRECTIVE_MAP = {
-      ' '      => { class: Comment },
-      'any'    => { class: Any },
-      'begin'  => { class: Begin, arguments: :parsed },
+      ' ' => { class: Comment },
+      'any' => { class: Any },
+      'begin' => { class: Begin, arguments: :parsed },
       'capture' => { class: Capture, arguments: :parsed },
-      'end'    => { class: End },
-      'maybe'  => { class: Maybe },
+      'end' => { class: End },
+      'maybe' => { class: Maybe },
       'repeat' => { class: Repeat, arguments: :parse },
-      'rest'   => { class: Rest }
+      'rest' => { class: Rest }
     }.freeze
     private_constant :DIRECTIVE_MAP
 
@@ -97,6 +99,7 @@ class TextExtractor
 
     def parse_directives(full_source)
       return [Comment.new(@state)] if full_source.start_with?(' ')
+
       split_directives(full_source)
         .map { |source| parse_one_directive(source) }
         .each { |directive| @directives << directive }
@@ -105,6 +108,7 @@ class TextExtractor
     def parse_one_directive(source)
       md = source.match(/^[a-z_]+/) || source.match(/^ /)
       raise "Unknown directive(s) in #{@state.current_line}" unless md
+
       word = md[0]
       map = DIRECTIVE_MAP.fetch(word) { raise "Unknown directive #{word}" }
       args = parse_arguments(map[:arguments], md.post_match)
@@ -118,6 +122,7 @@ class TextExtractor
     def parse_arguments(rule, source)
       return [] unless rule
       return rule.call(source) if rule.is_a?(Proc)
+
       source.match(/\(([^)]*)\)/) { |md| md[1] }
     end
   end # class Expander

@@ -1,4 +1,21 @@
-Naming/UncommunicativeMethodParamName:
+Metrics/BlockLength:
+  Exclude:
+    - test/**/*
+
+Metrics/ClassLength:
+  Max: 120
+  Exclude:
+    - test/**/*
+
+Metrics/MethodLength:
+  Exclude:
+    - test/**/*
+
+Metrics/ParameterLists:
+  Exclude:
+    - lib/text_extractor/record.rb
+
+Naming/MethodParameterName:
   AllowedNames:
     - id
     - re
@@ -6,13 +23,15 @@ Naming/UncommunicativeMethodParamName:
 Style/BlockDelimiters:
   EnforcedStyle: semantic
   IgnoredMethods:
+    - assert_raises
     - each
     - filldown
     - value
     - record
 
-Style/CommentedKeyword:
-  Enabled: false
-
-Style/Documentation:
-  Enabled: false
+Gemspec/RequiredRubyVersion: {Enabled: false}
+Layout/ClosingHeredocIndentation: {Enabled: false}
+Naming/HeredocDelimiterNaming: {Enabled: false}
+Style/CommentedKeyword: {Enabled: false}
+Style/Documentation: {Enabled: false}
+Style/FrozenStringLiteralComment: {Enabled: false}

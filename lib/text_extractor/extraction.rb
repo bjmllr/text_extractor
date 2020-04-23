@@ -27,6 +27,7 @@ class TextExtractor
       loop do
         match = input.match(re, pos)
         break unless match
+
         @pos = match.end(0)
         @matches << match
       end
